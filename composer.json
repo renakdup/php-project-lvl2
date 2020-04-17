@@ -1,0 +1,25 @@
+{
+  "name": "renakdup/php-project-lvl2",
+  "description": "Вычислитель отличий",
+  "keywords" : [
+    "gendiff", "project", "console"
+  ],
+  "type": "project",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "renakdup",
+      "email": "renakdup@gmail.com"
+    }
+  ],
+  "require": {
+    "symfony/var-dumper": "5.0.7",
+    "docopt/docopt": "1.0.4"
+  },
+  "require-dev": {
+    "squizlabs/php_codesniffer": "3.5.5"
+  },
+  "scripts": {
+    "phpcs": "vendor/bin/phpcs"
+  }
+}
