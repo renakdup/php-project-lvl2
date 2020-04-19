@@ -12,6 +12,9 @@
       "email": "renakdup@gmail.com"
     }
   ],
+  "bin": [
+    "public/bin/gendiff"
+  ],
   "require": {
     "symfony/var-dumper": "5.0.7",
     "tightenco/collect": "7.6.1",
