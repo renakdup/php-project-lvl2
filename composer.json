@@ -14,10 +14,17 @@
   ],
   "require": {
     "symfony/var-dumper": "5.0.7",
+    "tightenco/collect": "7.6.1",
     "docopt/docopt": "1.0.4"
   },
   "require-dev": {
     "squizlabs/php_codesniffer": "3.5.5"
+  },
+  "autoload": {
+    "files": [
+      "public/inc/Gendiff.php",
+      "public/inc/Command-line.php"
+    ]
   },
   "scripts": {
     "phpcs": "vendor/bin/phpcs"

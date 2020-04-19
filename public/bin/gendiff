@@ -1,20 +1,10 @@
 #!/usr/bin/env php
 <?php
 
-require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
+declare(strict_types=1);
 
-$doc = <<<DOC
-Generate diff
+require_once __DIR__ . '/../../vendor/autoload.php';
 
-Usage:
-  gendiff (-h|--help)
-  gendiff (-v|--version)
+use function Renakdup\inc\Command_line\setup;
 
-Options:
-  -h --help                     Show this screen
-  -v --version                  Show version
-DOC;
-
-$args = Docopt::handle($doc, ['version'=>'0.1']);
-foreach ($args as $k=>$v)
-    echo $k.': '.json_encode($v).PHP_EOL;
+setup();
