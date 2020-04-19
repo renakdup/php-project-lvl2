@@ -17,6 +17,7 @@ function genDiff(string $pathToFile1, string $pathToFile2): string
     $parsedFile2 = json_decode($file2, true);
 
     $renderLine = function ($key, $val, string $sign = ' '): string {
+        $val = is_bool($val) ? var_export($val, true) : $val;
         return "  {$sign} {$key}: {$val}";
     };
 
