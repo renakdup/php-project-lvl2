@@ -3,7 +3,14 @@
 
 declare(strict_types=1);
 
-require_once __DIR__ . '/../../vendor/autoload.php';
+$file_local = __DIR__ . '/../../vendor/autoload.php';
+$file_global = __DIR__ . '/../../../../autoload.php';
+
+if (file_exists($file_local)) {
+    require $file_local;
+} else {
+    require $file_global;
+}
 
 use function Renakdup\inc\Command_line\setup;
 

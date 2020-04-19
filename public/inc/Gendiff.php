@@ -6,8 +6,8 @@ namespace Renakdup\Gendiff;
 
 function genDiff(string $pathToFile1, string $pathToFile2): string
 {
-    if (! file_exists($pathToFile1) || file_exists($pathToFile2)) {
-        throw new \Exception('file1 or file2 not found');
+    if (! file_exists($pathToFile1) || ! file_exists($pathToFile2)) {
+        throw new \Exception("Files {$pathToFile1} or {$pathToFile2} not found");
     }
 
     $file1 = file_get_contents($pathToFile1);
@@ -41,5 +41,5 @@ function genDiff(string $pathToFile1, string $pathToFile2): string
 
     $lines = array_merge($lines, $lostFile2Lines);
 
-    return "{" . PHP_EOL . implode(PHP_EOL, $lines) . PHP_EOL . "}";
+    return "{" . PHP_EOL . implode(PHP_EOL, $lines) . PHP_EOL . "}" . PHP_EOL;
 }

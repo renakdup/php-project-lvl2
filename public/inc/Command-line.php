@@ -22,7 +22,7 @@ Options:
   -v --version                  Show version
   --format <fmt>                Report format [default: pretty]";
 
-function setup(): string
+function setup(): void
 {
     $args = Docopt::handle(DOC, [
         'version' => '0.1',
@@ -39,7 +39,8 @@ function setup(): string
         $file1 = $isAbsolutePath($file1) ? $file1 : getcwd() . '/' . $file1;
         $file2 = $isAbsolutePath($file2) ? $file2 : getcwd() . '/' . $file2;
 
-        return genDiff($file1, $file2);
+        echo genDiff($file1, $file2);
+        return;
     }
 
     ob_start();
@@ -47,5 +48,5 @@ function setup(): string
         echo $k . ': ' . json_encode($v) . PHP_EOL;
     }
 
-    return ob_get_clean();
+    echo ob_get_clean();
 }
