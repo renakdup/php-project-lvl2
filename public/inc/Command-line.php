@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Renakdup\inc\Command_line;
 
 use Docopt;
+
 use function Renakdup\Gendiff\genDiff;
 
 const ARG_FIRST_FILE_1 = '<firstFile>';
