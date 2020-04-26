@@ -35,7 +35,7 @@ jobs:
       run: make lint
 
     - name: Run PHPUnit tests
-      run: make unit-test
+      run: make test-phpunit
 
       # Publish code coverage on Code Climate
       # https://docs.codeclimate.com/docs/github-actions-test-coverage
@@ -44,5 +44,5 @@ jobs:
       env:
         CC_TEST_REPORTER_ID: 422c66e010b5dc4f27651580166c456add7baf82fdfb82532ecfa3f756e7d231
       with:
-        coverageCommand: test-phpunit
+        coverageCommand: make test-phpunit
         debug: true
