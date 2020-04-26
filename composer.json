@@ -18,7 +18,8 @@
   "require": {
     "symfony/var-dumper": "5.0.7",
     "tightenco/collect": "7.6.1",
-    "docopt/docopt": "1.0.4"
+    "docopt/docopt": "1.0.4",
+    "symfony/yaml": "^5.0"
   },
   "require-dev": {
     "squizlabs/php_codesniffer": "3.5.5",
@@ -27,6 +28,9 @@
   "autoload": {
     "files": [
       "public/inc/Gendiff.php",
+      "public/inc/RenderDiff.php",
+      "public/inc/GenerateAst.php",
+      "public/inc/ParseFile.php",
       "public/inc/Command-line.php"
     ]
   },
