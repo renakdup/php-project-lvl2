@@ -23,6 +23,9 @@ jobs:
     - name: Check CodeStyle
       run: make lint
 
+    - name: Run PHPUnit tests
+      run: make unit-test
+
     # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
     # Docs: https://getcomposer.org/doc/articles/scripts.md
 
