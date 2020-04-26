@@ -2,5 +2,5 @@ install:
 	composer install
 lint:
 	composer run-script phpcs -- --standard=PSR12 public
-unit-test:
+test-phpunit:
 	composer phpunit
