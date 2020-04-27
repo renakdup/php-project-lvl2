@@ -35,14 +35,14 @@ function generateAstDiff(array $dataBefore, array $dataAfter): array
         }
     }
 
-    $lostFile2Lines = collect($dataAfter)->map(function ($val, $key) {
+    $lostLines = collect($dataAfter)->map(function ($val, $key) {
         return [
             'operator' => '+',
             'value' => $val
         ];
     })->all();
 
-    $result = array_merge($result, $lostFile2Lines);
+    $result = array_merge($result, $lostLines);
 
     return $result;
 }

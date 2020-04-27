@@ -1,0 +1,7 @@
+<?php
+
+return [
+    'host' => 'hexlet.io',
+    'timeout' => 20,
+    'verbose' => true
+];

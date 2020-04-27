@@ -34,4 +34,27 @@ class ParseFileTest extends TestCase
         $this->expectException('Exception');
         parseFile(__DIR__ . '/fixtures/not_correct_file_extension.x1241');
     }
+
+    /**
+     * @dataProvider differentFilesProvider
+     */
+    public function testParseDifferentFiles($a, $expected)
+    {
+        $this->assertEquals($expected, parseFile($a));
+    }
+
+    public function differentFilesProvider()
+    {
+        $fixtures['json'] = [
+            'path' =>  __DIR__ . '/fixtures/parseFile/json/data.json',
+            'result' => require 'fixtures/parseFile/json/result.php',
+        ];
+
+        $fixtures['yaml'] = [
+            'path' => __DIR__ . '/fixtures/parseFile/yaml/data.yaml',
+            'result' => require 'fixtures/parseFile/yaml/result.php',
+        ];
+
+        return $fixtures;
+    }
 }

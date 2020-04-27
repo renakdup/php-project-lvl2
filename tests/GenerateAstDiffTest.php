@@ -10,9 +10,9 @@ class GenerateAstDiffTest extends TestCase
     protected function setUp(): void
     {
         $this->fixtures['first'] = [
-            'before' => require 'fixtures/json/first/before-parsed.php',
-            'after' => require 'fixtures/json/first/after-parsed.php',
-            'result' => require 'fixtures/json/first/result.php',
+            'before' => require 'fixtures/generateAstDiff/before.php',
+            'after' => require 'fixtures/generateAstDiff/after.php',
+            'result' => require 'fixtures/generateAstDiff/result.php',
         ];
 
         // TODO:: u can add one more fixtures
