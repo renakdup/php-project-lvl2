@@ -1,6 +1,9 @@
 <?php
 
+namespace Renakdup\tests;
+
 use PHPUnit\Framework\TestCase;
+
 use function Renakdup\ParseFile\parseFile;
 use function Renakdup\ParseFile\getFileType;
 

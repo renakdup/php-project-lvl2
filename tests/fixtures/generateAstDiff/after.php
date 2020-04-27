@@ -5,4 +5,3 @@ return [
     'verbose' => true,
     'host' => 'hexlet.io',
 ];
-

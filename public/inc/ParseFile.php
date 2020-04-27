@@ -15,15 +15,11 @@ function parseFile(string $pathToFile): array
     $content = file_get_contents($pathToFile);
     $extension = getFileType($pathToFile);
 
-    if ($extension === 'json')
-    {
+    if ($extension === 'json') {
         return json_decode($content, true);
-    }
-    elseif ($extension === 'yaml')
-    {
+    } elseif ($extension === 'yaml') {
         return Yaml::parse($content);
-    }
-    else {
+    } else {
         throw new \Exception("File's type '{$extension}' doesn't support");
     }
 }

@@ -1,6 +1,9 @@
 <?php
 
+namespace Renakdup\tests;
+
 use PHPUnit\Framework\TestCase;
+
 use function Renakdup\GenerateAst\generateAstDiff;
 
 class GenerateAstDiffTest extends TestCase
