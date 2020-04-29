@@ -49,42 +49,42 @@ namespace Renakdup\GenerateAst;
 
 
 
-function generateAstDiff(array $dataBefore, array $dataAfter, ?string $parentKey = null): array
+function generateAstDiff($dataBefore, $dataAfter): array
 {
     $result = [];
+    $added = [];
 
     foreach ($dataBefore as $key => $val) {
-        if (is_array($val) && ! isset($dataAfter[$key])) {
+        if (is_object($val) && ! isset($dataAfter->$key)) {
             $result[$key] = [
                 'operator' => '-',
-                'value' => $val
+                'value' => (array) $dataBefore->$key
             ];
-            continue;
-        } elseif (is_array($val)) {
-            $result[$key] = generateAstDiff($dataBefore[$key], $dataAfter[$key]);
-            unset($dataAfter[$key]);
-            continue;
-        }
-
-        if (isset($dataAfter[$key]) && $dataAfter[$key] === $val) {
+        } elseif (is_object($val) && isset($dataAfter->$key)) {
+            $result[$key] = [
+                'operator' => '=',
+                'children' => generateAstDiff($dataBefore->$key, $dataAfter->$key)
+            ];
+            $added[] = $key;
+        } elseif (isset($dataAfter->$key) && $dataAfter->$key === $val) {
             $result[$key] = [
                 'operator' => '=',
                 'value' => $val
             ];
-            unset($dataAfter[$key]);
-        } elseif (isset($dataAfter[$key]) && $dataAfter[$key] !== $val) {
+            $added[] = $key;
+        } elseif (isset($dataAfter->$key) && $dataAfter->$key !== $val) {
             $result[$key] = [
                 [
                     'operator' => '+',
-                    'value' => $dataAfter[$key],
+                    'value' => $dataAfter->$key,
                 ],
                 [
                     'operator' => '-',
                     'value' => $val,
                 ],
             ];
-            unset($dataAfter[$key]);
-        } elseif (! isset($dataAfter[$key])) {
+            $added[] = $key;
+        } elseif (! isset($dataAfter->$key)) {
             $result[$key] = [
                 'operator' => '-',
                 'value' => $val
@@ -92,14 +92,19 @@ function generateAstDiff(array $dataBefore, array $dataAfter, ?string $parentKey
         }
     }
 
-    $lostLines = collect($dataAfter)->map(function ($val, $key) {
-        return [
-            'operator' => '+',
-            'value' => $val
-        ];
-    })->all();
+    $collect = collect($dataAfter)
+        ->reject(function ($val, $key) use ($added) {
+            return in_array($key, $added);
+        })
+        ->map(function ($val, $key) {
+            return [
+                'operator' => '+',
+                'value'    => (array)$val,
+            ];
+        })
+        ->toArray();
 
-    $result = array_merge($result, $lostLines);
+    $result = array_merge($result, $collect);
 
     return $result;
 }

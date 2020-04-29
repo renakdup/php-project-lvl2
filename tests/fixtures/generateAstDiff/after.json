@@ -1,0 +1,15 @@
+{
+  "common": {
+    "setting1": "Value equal",
+    "setting2": "Value new",
+    "setting3": true,
+    "setting7": {
+      "some_key2": "some_value2"
+    },
+    "setting10": {
+      "sub": [1, 2, 3],
+      "sub2": [6, 7 ,8]
+    }
+  },
+  "operator": "value"
+}
