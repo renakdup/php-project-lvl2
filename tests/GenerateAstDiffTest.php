@@ -21,6 +21,9 @@ class GenerateAstDiffTest extends TestCase
         // TODO:: u can add one more fixtures
     }
 
+    /**
+     * Тестируем генерацию AST дерева
+     */
     public function testGenerateAstDiff()
     {
         $diffResult = generateAstDiff($this->fixtures['first']['before'], $this->fixtures['first']['after']);

@@ -2,3 +2,6 @@
 /.idea/*
 /public/files/*
 /build/*
+
+# dev directory
+/temp/*
