@@ -12,3 +12,8 @@
 Рекурсивное сравнение
 
 [![asciicast](https://asciinema.org/a/Ze5DA8n8qFRSQOwkqoIazbNZK.svg)](https://asciinema.org/a/Ze5DA8n8qFRSQOwkqoIazbNZK)
+
+Вывод diff в плоском формате
+
+[![asciicast](https://asciinema.org/a/zWPTQheERIkojD689Mv4MxUtx.svg)](https://asciinema.org/a/zWPTQheERIkojD689Mv4MxUtx)
+
