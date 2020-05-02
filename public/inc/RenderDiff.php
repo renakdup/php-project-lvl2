@@ -4,35 +4,84 @@ declare(strict_types=1);
 
 namespace Renakdup\RenderDiff;
 
-function getDiffLines(array $diff, ?string $parentKey = null): array
+use const Renakdup\GenerateAst\TYPE__OBJECT;
+
+function getDiffLines(array $data, int $depth = 0): array
 {
     $lines = [];
 
-    foreach ($diff as $key => $item) {
-        if (is_array($item) && ! isset($item['operator'])) {
-            $lines = array_merge($lines, getDiffLines($item, $key));
-            continue;
-        }
-
-        if (isset($parentKey)) {
-            $lines[] = renderLine($parentKey, $item['value'], $item['operator']);
-        } else {
-            $lines[] = renderLine($key, $item['value'], $item['operator']);
+    foreach ($data as $key => $item) {
+        if (isset($item['children'])) {
+            $lines[] = renderChildrenLines($key, $item['children'], $item['operator'], $depth);
+        } elseif (isset($item['diff'])) {
+            $diff = renderDiffLines($key, $item['diff'], $depth);
+            $lines = array_merge($lines, $diff);
+        } elseif (isset($item['value']) && isset($item['type']) && $item['type'] === TYPE__OBJECT) {
+            $lines[] = renderObjectLines($key, json_decode($item['value'], true), $item['operator'], $depth);
+        } elseif (isset($item['value'])) {
+            $lines[] = renderKeyValueLines($key, $item['value'], $item['operator'], $depth);
         }
     }
 
     return $lines;
 }
 
-function renderLine($key, $val, string $sign): string
+function getSign(string $operator): string
 {
-    $sign = $sign === '=' ? ' ' : $sign;
-
-    $val = is_bool($val) ? var_export($val, true) : $val;
-    return "  {$sign} {$key}: {$val}";
+    return $operator === '=' ? ' ' : $operator;
 }
 
-function outputDiff(array $astDiff): string
+function renderLine(string $key, $val, string $operator, int $depth): string
+{
+    $sign = getSign($operator);
+    $offset = str_repeat('  ', $depth);
+
+    if (is_bool($val)) {
+        $val = var_export($val, true);
+    } elseif (is_array($val)) {
+        $val = json_encode($val);
+    }
+
+    return "  {$offset}{$sign} {$key}: {$val}";
+}
+
+function renderChildrenLines(string $key, array $children, string $operator, int $depth)
+{
+    $sign = getSign($operator);
+    $offset = str_repeat('  ', $depth + 1);
+    $items = getDiffLines($children, $depth + 2);
+    $line = implode(PHP_EOL, $items);
+
+    return "{$offset}{$sign} {$key}: {\n{$line}\n  {$offset}}";
+}
+
+function renderDiffLines(string $key, array $diff, int $depth): array
+{
+    return collect($diff)
+        ->map(function ($item) use ($key, $depth) {
+            return renderLine($key, $item['value'], $item['operator'], $depth + 1);
+        })->toArray();
+}
+
+function renderObjectLines(string $key, array $obj, string $operator, int $depth): string
+{
+    $sign = getSign($operator);
+    $offset = str_repeat('  ', $depth + 2);
+    $collect = collect($obj)
+        ->map(function ($item, $k) use ($depth) {
+            return renderLine($k, $item, '=', $depth + 2);
+        })->toArray();
+    $line = implode(PHP_EOL, $collect);
+
+    return "{$offset}{$sign} {$key}: {\n{$line}\n  {$offset}}";
+}
+
+function renderKeyValueLines(string $key, string $value, string $operator, int $depth): string
+{
+    return renderLine($key, $value, $operator, $depth + 1);
+}
+
+function renderDiff(array $astDiff): string
 {
     $lines = getDiffLines($astDiff);
 

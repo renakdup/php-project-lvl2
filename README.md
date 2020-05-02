@@ -8,3 +8,7 @@
 Еще примеры работ
 
 [![asciicast](https://asciinema.org/a/fNK2eS1Pc8DqtutHL2FgImd4x.svg)](https://asciinema.org/a/fNK2eS1Pc8DqtutHL2FgImd4x)
+
+Рекурсивное сравнение
+
+[![asciicast](https://asciinema.org/a/Ze5DA8n8qFRSQOwkqoIazbNZK.svg)](https://asciinema.org/a/Ze5DA8n8qFRSQOwkqoIazbNZK)

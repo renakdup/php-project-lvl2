@@ -1,9 +1,14 @@
 <?php
 
-use PHPUnit\Framework\TestCase;
-
+//
+//use PHPUnit\Framework\TestCase;
+//
+//use function Renakdup\RenderDiff\renderDiff;
+//
 //class GenDiffTest extends TestCase
 //{
+////    protected $fixtures;
+////
 ////    protected function setUp(): void
 ////    {
 ////        $this->fixtures['first'] = [

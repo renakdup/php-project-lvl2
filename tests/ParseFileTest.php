@@ -10,6 +10,8 @@ use function Renakdup\ParseFile\getFileType;
 class ParseFileTest extends TestCase
 {
     /**
+     * Проверяем корретность определения extension по filepath
+     *
      * @dataProvider typesProvider
      */
     public function testGetFileTypeBaseCase($a, $expected)
@@ -26,27 +28,39 @@ class ParseFileTest extends TestCase
         ];
     }
 
+    /**
+     * Тестируем exception на несуществующий файл
+     *
+     * @throws \Exception
+     */
     public function testNotExistFileException()
     {
         $this->expectException('Exception');
-        parseFile('not_exist_file.txt');
-    }
-
-    public function testNotCorrectFileExtensionException()
-    {
-        $this->expectException('Exception');
-        parseFile(__DIR__ . '/fixtures/not_correct_file_extension.x1241');
+        parseFile(__DIR__ . '/not_exist_file.txt');
     }
 
     /**
-     * @dataProvider differentFilesProvider
+     * Тестируем некорретный file extension
+     *
+     * @throws \Exception
      */
-    public function testParseDifferentFiles($a, $expected)
+    public function testNotCorrectFileExtensionException()
+    {
+        $this->expectException('Exception');
+        parseFile(__DIR__ . '/fixtures/file.not_correct_file_extension');
+    }
+
+    /**
+     * Тестируем корректность парсинга json и yaml файлов
+     *
+     * @dataProvider filesProvider
+     */
+    public function testParseFiles($a, $expected)
     {
         $this->assertEquals($expected, parseFile($a));
     }
 
-    public function differentFilesProvider()
+    public function filesProvider()
     {
         $fixtures['json'] = [
             'path' =>  __DIR__ . '/fixtures/parseFile/json/data.json',
