@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Renakdup\RenderDiff;
+namespace Renakdup\formatters\RenderJson;
 
 use const Renakdup\GenerateAst\TYPE__OBJECT;
 
@@ -37,7 +37,7 @@ function renderLine(string $key, $val, string $operator, int $depth): string
     $offset = str_repeat('  ', $depth);
 
     if (is_bool($val)) {
-        $val = var_export($val, true);
+        $val = $val ? 'true' : 'false';
     } elseif (is_array($val)) {
         $val = json_encode($val);
     }
@@ -81,7 +81,7 @@ function renderKeyValueLines(string $key, string $value, string $operator, int $
     return renderLine($key, $value, $operator, $depth + 1);
 }
 
-function renderDiff(array $astDiff): string
+function render(array $astDiff): string
 {
     $lines = getDiffLines($astDiff);
 

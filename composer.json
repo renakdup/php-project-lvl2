@@ -28,7 +28,8 @@
   "autoload": {
     "files": [
       "public/inc/Gendiff.php",
-      "public/inc/RenderDiff.php",
+      "public/inc/formatters/RenderJson.php",
+      "public/inc/formatters/RenderPlain.php",
       "public/inc/GenerateAst.php",
       "public/inc/ParseFile.php",
       "public/inc/Command-line.php"

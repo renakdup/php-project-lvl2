@@ -1,0 +1,8 @@
+Property 'common.setting2' was changed. From 'Value old' to 'Value new'
+Property 'common.setting3' was changed. From 'false' to 'true'
+Property 'common.setting6' was removed
+Property 'common.setting10.sub2' was changed. From '[11,22]' to '[6,7,8]'
+Property 'common.deep.deep2.deep3.deep4' was changed. From 'value' to 'value-changed'
+Property 'common.deep.deep2.key-new' was changed. From '["test","test2",3,5]' to '[3,5]'
+Property 'common.deep.deep2.key-new2' was added with value: 'test'
+Property 'common.setting7' was added with value: 'complex value'

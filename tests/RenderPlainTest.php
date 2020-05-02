@@ -1,19 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Renakdup\test;
 
 use PHPUnit\Framework\TestCase;
 
-use function Renakdup\RenderDiff\renderDiff;
+use function Renakdup\formatters\RenderPlain\render;
 
-class RenderDiffTest extends TestCase
+class RenderPlainTest extends TestCase
 {
     /**
      * @dataProvider dataOutputDiffProvider
      */
     public function testOutputDiff($a, $expected)
     {
-        $this->assertEquals($expected, renderDiff($a));
+        $this->assertEquals($expected, render($a));
     }
 
     public function dataOutputDiffProvider()
@@ -21,7 +23,7 @@ class RenderDiffTest extends TestCase
         return [
             [
                 'astDiff' => require 'fixtures/generateAstDiff/result.php',
-                'result' => file_get_contents(__DIR__ . '/fixtures/renderDiff/result.txt')
+                'result' => file_get_contents(__DIR__ . '/fixtures/formatters/plain-result.txt')
             ],
         ];
     }

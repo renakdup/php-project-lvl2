@@ -12,6 +12,6 @@ if (file_exists($file_local)) {
     require $file_global;
 }
 
-use function Renakdup\inc\Command_line\setup;
+use function Renakdup\inc\CommandLine\setup;
 
 setup();

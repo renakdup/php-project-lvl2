@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Renakdup\tests;
 
 use PHPUnit\Framework\TestCase;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Renakdup\inc\Command_line;
+namespace Renakdup\inc\CommandLine;
 
 use Docopt;
 
@@ -11,17 +11,21 @@ use function Renakdup\Gendiff\genDiff;
 const ARG_FIRST_FILE_1 = '<firstFile>';
 const ARG_FIRST_FILE_2 = '<secondFile>';
 
+const ARG_FORMAT = '--format';
+const FORMAT_JSON = 'json';
+const FORMAT_PLAIN = 'plain';
+
 const DOC = "Generate diff
 
 Usage:
   gendiff (-h|--help)
   gendiff (-v|--version)
-  gendiff [--format <fmt>]  " . ARG_FIRST_FILE_1 . " " . ARG_FIRST_FILE_2 . "
+  gendiff [" . ARG_FORMAT . " <fmt>]  " . ARG_FIRST_FILE_1 . " " . ARG_FIRST_FILE_2 . "
 
 Options:
   -h --help                     Show this screen
   -v --version                  Show version
-  --format <fmt>                Report format [default: pretty]";
+  " . ARG_FORMAT . " <fmt>                Report format [default: " . FORMAT_JSON . "]";
 
 function setup(): void
 {
@@ -40,14 +44,22 @@ function setup(): void
         $file1 = $isAbsolutePath($file1) ? $file1 : getcwd() . '/' . $file1;
         $file2 = $isAbsolutePath($file2) ? $file2 : getcwd() . '/' . $file2;
 
-        echo genDiff($file1, $file2);
+        $format = $args[ARG_FORMAT];
+
+        echo genDiff($file1, $file2, $format);
         return;
     }
 
-    ob_start();
+    echo getCommandInfo($args);
+}
+
+function getCommandInfo($args): string
+{
+    $result = '';
+
     foreach ($args as $k => $v) {
-        echo $k . ': ' . json_encode($v) . PHP_EOL;
+        $result .= $k . ': ' . json_encode($v) . PHP_EOL;
     }
 
-    echo ob_get_clean();
+    return $result;
 }
