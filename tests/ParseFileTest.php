@@ -38,7 +38,7 @@ class ParseFileTest extends TestCase
     public function testNotExistFileException()
     {
         $this->expectException('Exception');
-        parseFile(__DIR__ . '/not_exist_file.txt');
+        parseFile(__DIR__ . '/not_exist_file_' . time() . '.txt');
     }
 
     /**

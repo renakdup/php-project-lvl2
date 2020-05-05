@@ -17,3 +17,6 @@
 
 [![asciicast](https://asciinema.org/a/zWPTQheERIkojD689Mv4MxUtx.svg)](https://asciinema.org/a/zWPTQheERIkojD689Mv4MxUtx)
 
+Реализован вывод json diff
+
+[![asciicast](https://asciinema.org/a/XsPAzE8kROTcfyCY7piN3sJi8.svg)](https://asciinema.org/a/XsPAzE8kROTcfyCY7piN3sJi8)

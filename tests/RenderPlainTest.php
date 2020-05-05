@@ -6,7 +6,7 @@ namespace Renakdup\test;
 
 use PHPUnit\Framework\TestCase;
 
-use function Renakdup\formatters\RenderPlain\render;
+use function Renakdup\formatters\Plain\render;
 
 class RenderPlainTest extends TestCase
 {

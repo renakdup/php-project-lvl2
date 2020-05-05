@@ -6,9 +6,9 @@ namespace Renakdup\test;
 
 use PHPUnit\Framework\TestCase;
 
-use function Renakdup\formatters\Json\render;
+use function Renakdup\formatters\DefaultFormat\render;
 
-class RenderJsonTest extends TestCase
+class RenderDefaultTest extends TestCase
 {
     /**
      * @dataProvider dataOutputDiffProvider
@@ -23,7 +23,7 @@ class RenderJsonTest extends TestCase
         return [
             [
                 'astDiff' => require 'fixtures/generateAstDiff/result.php',
-                'result' => file_get_contents(__DIR__ . '/fixtures/formatters/json-result.json')
+                'result' => file_get_contents(__DIR__ . '/fixtures/formatters/default-result.txt')
             ],
         ];
     }
