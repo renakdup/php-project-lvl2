@@ -8,41 +8,47 @@ const TYPE__OBJECT = 'object';
 const TYPE__ARRAY = 'array';
 const TYPE__SIMPLE = 'simple';
 
-function generateAstDiff($dataBefore, $dataAfter): array
+function generateAstDiff(object $dataBefore, object $dataAfter): array
 {
-    $result = [];
     $added = [];
 
-    foreach ($dataBefore as $key => $val) {
-        if (is_object($val) && ! isset($dataAfter->$key)) {
-            $result[$key] = getNode($dataBefore->$key, '-');
-        } elseif (is_object($val) && isset($dataAfter->$key)) {
-            $result[$key] = [
-                'operator' => '=',
-                'children' => generateAstDiff($dataBefore->$key, $dataAfter->$key)
-            ];
-            $added[] = $key;
-        } elseif (isset($dataAfter->$key) && $dataAfter->$key === $val) {
-            $result[$key] = getNode($val, '=');
-            $added[] = $key;
-        } elseif (isset($dataAfter->$key) && $dataAfter->$key !== $val) {
-            $result[$key]['diff'] = [
-                getNode($dataAfter->$key, '+'),
-                getNode($val, '-'),
-            ];
-            $added[] = $key;
-        } elseif (! isset($dataAfter->$key)) {
-            $result[$key] = getNode($val, '-');
-            $added[] = $key;
-        }
-    }
+    $keys = array_keys(get_object_vars($dataBefore));
+
+    $result = collect($keys)
+        ->reduce(function ($acc, $key) use ($dataBefore, $dataAfter, &$added) {
+            $item = $dataBefore->$key;
+
+            if (is_object($item) && ! isset($dataAfter->$key)) {
+                $acc[$key] = getNode($dataBefore->$key, 'remove');
+            } elseif (is_object($item) && isset($dataAfter->$key)) {
+                $acc[$key] = [
+                    'action' => 'equal',
+                    'children' => generateAstDiff($dataBefore->$key, $dataAfter->$key)
+                ];
+                $added[] = $key;
+            } elseif (isset($dataAfter->$key) && $dataAfter->$key === $item) {
+                $acc[$key] = getNode($item, 'equal');
+                $added[] = $key;
+            } elseif (isset($dataAfter->$key) && $dataAfter->$key !== $item) {
+                $acc[$key]['diff'] = [
+                    getNode($dataAfter->$key, 'add'),
+                    getNode($item, 'remove'),
+                ];
+                $added[] = $key;
+            } elseif (! isset($dataAfter->$key)) {
+                $acc[$key] = getNode($item, 'remove');
+                $added[] = $key;
+            }
+
+            return $acc;
+        });
 
     $collect = collect($dataAfter)
         ->reject(function ($val, $key) use ($added) {
             return in_array($key, $added);
         })
         ->map(function ($val, $key) {
-            return getNode($val, '+');
+            return getNode($val, 'add');
         })
         ->toArray();
 
@@ -51,7 +57,7 @@ function generateAstDiff($dataBefore, $dataAfter): array
     return $result;
 }
 
-function getNode($value, string $operator): array
+function getNode($value, string $action): array
 {
     if (is_object($value)) {
         $type = TYPE__OBJECT;
@@ -64,7 +70,7 @@ function getNode($value, string $operator): array
     }
 
     return [
-        'operator' => $operator,
+        'action' => $action,
         'type' => $type,
         'value' => $value
     ];

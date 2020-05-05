@@ -28,5 +28,5 @@
             some_key2: some_value2
           }
     }
-      operator: value
+      action: value
 }

@@ -5,14 +5,15 @@ namespace Renakdup\tests;
 use PHPUnit\Framework\TestCase;
 
 use function Renakdup\Gendiff\genDiff;
+use function Renakdup\ParseFile\parseFile;
 
-use const Renakdup\inc\CommandLine\FORMAT_JSON;
+use const Renakdup\inc\CommandLine\FORMAT_DEFAULT;
 use const Renakdup\inc\CommandLine\FORMAT_PLAIN;
 
 class GenDiffTest extends TestCase
 {
     /**
-     * Тестируем корретность сравнения файлов разных форматов
+     * Тестируем сравнение файлов и полученный diff, разных типов вывода
      *
      * @dataProvider inputOutputGendiffDataProvider
      */
@@ -25,14 +26,14 @@ class GenDiffTest extends TestCase
     {
         return [
             [
-                'before' => __DIR__ . '/fixtures/generateAstDiff/before.json',
-                'after'  => __DIR__ . '/fixtures/generateAstDiff/after.json',
-                'type'   => FORMAT_JSON,
-                'result' => file_get_contents(__DIR__ . '/fixtures/formatters/json-result.txt'),
+                'before' => parseFile(__DIR__ . '/fixtures/generateAstDiff/before.json'),
+                'after'  => parseFile(__DIR__ . '/fixtures/generateAstDiff/after.json'),
+                'type'   => FORMAT_DEFAULT,
+                'result' => file_get_contents(__DIR__ . '/fixtures/formatters/default-result.txt'),
             ],
             [
-                'before' => __DIR__ . '/fixtures/generateAstDiff/before.json',
-                'after'  => __DIR__ . '/fixtures/generateAstDiff/after.json',
+                'before' => parseFile(__DIR__ . '/fixtures/generateAstDiff/before.json'),
+                'after'  => parseFile(__DIR__ . '/fixtures/generateAstDiff/after.json'),
                 'type'   => FORMAT_PLAIN,
                 'result' => file_get_contents(__DIR__ . '/fixtures/formatters/plain-result.txt'),
             ]
@@ -41,13 +42,11 @@ class GenDiffTest extends TestCase
 
     /**
      * Тестируем выброс Exception для некорретного формата отображения данных
-     *
-     * @throws Exception
      */
     public function testCorrectTypeException()
     {
-        $before = __DIR__ . '/fixtures/generateAstDiff/before.json';
-        $after  = __DIR__ . '/fixtures/generateAstDiff/after.json';
+        $before = parseFile(__DIR__ . '/fixtures/generateAstDiff/before.json');
+        $after  = parseFile(__DIR__ . '/fixtures/generateAstDiff/after.json');
         $type = 'not_correct_type';
 
         $this->expectException('Exception');
