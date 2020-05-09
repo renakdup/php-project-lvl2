@@ -34,15 +34,12 @@ jobs:
     - name: Check CodeStyle
       run: make lint
 
-    - name: Run PHPUnit tests
-      run: make test-phpunit
-
       # Publish code coverage on Code Climate
       # https://docs.codeclimate.com/docs/github-actions-test-coverage
     - name: Test & publish code coverage
       uses: paambaati/codeclimate-action@v2.6.0
       env:
-        CC_TEST_REPORTER_ID: 422c66e010b5dc4f27651580166c456add7baf82fdfb82532ecfa3f756e7d231
+        CC_TEST_REPORTER_ID: ${{ secrets.codeclimate_cc_test }}
       with:
         coverageCommand: make test-phpunit
         debug: true
