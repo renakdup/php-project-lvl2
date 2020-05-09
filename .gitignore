@@ -1,6 +1,6 @@
 /vendor/*
 /.idea/*
-/public/files/*
+/files/*
 /build/*
 
 # dev directory
