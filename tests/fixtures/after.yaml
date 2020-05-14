@@ -1,0 +1,24 @@
+{
+  "common": {
+    "setting1": "Value equal",
+    "setting2": "Value new",
+    "setting3": true,
+    "setting7": {
+      "some_key2": "some_value2"
+    },
+    "setting10": {
+      "sub": [1, 2, 3],
+      "sub2": [6, 7 ,8]
+    },
+    "deep": {
+      "deep2": {
+        "deep3": {
+          "deep4": "value-changed"
+        },
+        "key-new": [3 , 5],
+        "key-new2": "test"
+      }
+    }
+  },
+  "action": "value"
+}

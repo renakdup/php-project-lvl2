@@ -1,0 +1,23 @@
+{
+  "common": {
+    "setting1": "Value equal",
+    "setting2": "Value old",
+    "setting3": false,
+    "setting6": {
+      "some_key": "some_value"
+    },
+    "setting10": {
+      "sub": [1, 2, 3],
+      "sub2": [11, 22]
+    },
+    "deep": {
+      "deep2": {
+        "deep3": {
+          "deep4": "value"
+        },
+        "key-new": ["test", "test2", 3 , 5]
+      }
+    }
+  },
+  "action": "value"
+}

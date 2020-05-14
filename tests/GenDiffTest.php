@@ -9,11 +9,12 @@ use function Renakdup\ParseFile\parseFile;
 
 use const Renakdup\inc\CommandLine\FORMAT_DEFAULT;
 use const Renakdup\inc\CommandLine\FORMAT_PLAIN;
+use const Renakdup\inc\CommandLine\FORMAT_JSON;
 
 class GenDiffTest extends TestCase
 {
     /**
-     * Тестируем сравнение файлов и полученный diff, разных типов вывода
+     * Тестируем сравнение файлов yaml, json и полученный diff типов (plain, json, default)
      *
      * @dataProvider inputOutputGendiffDataProvider
      */
@@ -26,30 +27,29 @@ class GenDiffTest extends TestCase
     {
         return [
             [
-                'before' => parseFile(__DIR__ . '/fixtures/generateAstDiff/before.json'),
-                'after'  => parseFile(__DIR__ . '/fixtures/generateAstDiff/after.json'),
+                'before' => parseFile(__DIR__ . '/fixtures/before.json'),
+                'after'  => parseFile(__DIR__ . '/fixtures/after.json'),
                 'type'   => FORMAT_DEFAULT,
-                'result' => file_get_contents(__DIR__ . '/fixtures/formatters/default-result.txt'),
+                'result' => file_get_contents(__DIR__ . '/fixtures/default-result.txt'),
             ],
             [
-                'before' => parseFile(__DIR__ . '/fixtures/generateAstDiff/before.json'),
-                'after'  => parseFile(__DIR__ . '/fixtures/generateAstDiff/after.json'),
+                'before' => parseFile(__DIR__ . '/fixtures/before.yaml'),
+                'after'  => parseFile(__DIR__ . '/fixtures/after.yaml'),
+                'type'   => FORMAT_DEFAULT,
+                'result' => file_get_contents(__DIR__ . '/fixtures/default-result.txt'),
+            ],
+            [
+                'before' => parseFile(__DIR__ . '/fixtures/before.json'),
+                'after'  => parseFile(__DIR__ . '/fixtures/after.json'),
                 'type'   => FORMAT_PLAIN,
-                'result' => file_get_contents(__DIR__ . '/fixtures/formatters/plain-result.txt'),
+                'result' => file_get_contents(__DIR__ . '/fixtures/plain-result.txt'),
+            ],
+            [
+                'before' => parseFile(__DIR__ . '/fixtures/before.json'),
+                'after'  => parseFile(__DIR__ . '/fixtures/after.json'),
+                'type'   => FORMAT_JSON,
+                'result' => file_get_contents(__DIR__ . '/fixtures/json-result.json'),
             ]
         ];
-    }
-
-    /**
-     * Тестируем выброс Exception для некорретного формата отображения данных
-     */
-    public function testCorrectTypeException()
-    {
-        $before = parseFile(__DIR__ . '/fixtures/generateAstDiff/before.json');
-        $after  = parseFile(__DIR__ . '/fixtures/generateAstDiff/after.json');
-        $type = 'not_correct_type';
-
-        $this->expectException('Exception');
-        genDiff($before, $after, $type);
     }
 }
