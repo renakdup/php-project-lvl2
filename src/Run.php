@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Renakdup\inc\CommandLine;
+namespace Renakdup\Gendiff;
 
 use Docopt;
 
-use function Renakdup\Gendiff\genDiff;
+use function Renakdup\Gendiff\gendiff;
 use function Renakdup\ParseFile\parseFile;
 
 const DOCOPT_VERSION = '0.1';
@@ -33,7 +33,7 @@ Options:
   " . ARG_FORMAT . " <fmt>                Report format [default: " . FORMAT_DEFAULT . "]";
 
 
-function setup(): void
+function run(): void
 {
     $args = Docopt::handle(DOC, [
         'version' => DOCOPT_VERSION,
@@ -45,10 +45,7 @@ function setup(): void
 
         $format = $args[ARG_FORMAT];
 
-        $contentBefore = parseFile($filePathBefore);
-        $contentAfter = parseFile($filePathAfter);
-
-        echo genDiff($contentBefore, $contentAfter, $format);
+        echo gendiff($filePathBefore, $filePathAfter, $format);
         return;
     }
 

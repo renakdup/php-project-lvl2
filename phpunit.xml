@@ -13,7 +13,7 @@
     <filter>
         <whitelist addUncoveredFilesFromWhitelist="true">
             <!-- the files included in the clover report -->
-            <directory suffix=".php">./inc</directory>
+            <directory suffix=".php">./src</directory>
         </whitelist>
     </filter>
     <logging>

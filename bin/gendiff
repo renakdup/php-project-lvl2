@@ -3,15 +3,15 @@
 
 declare(strict_types=1);
 
-$file_local = __DIR__ . '/../../vendor/autoload.php';
-$file_global = __DIR__ . '/../../../../autoload.php';
+$fileLocal = __DIR__ . '/../../vendor/autoload.php';
+$fileGlobal = __DIR__ . '/../../../../autoload.php';
 
-if (file_exists($file_local)) {
-    require $file_local;
+if (file_exists($fileLocal)) {
+    require $fileLocal;
 } else {
-    require $file_global;
+    require $fileGlobal;
 }
 
-use function Renakdup\inc\CommandLine\setup;
+use function Renakdup\Gendiff\run;
 
-setup();
+run();

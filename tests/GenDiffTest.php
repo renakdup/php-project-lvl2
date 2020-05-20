@@ -1,55 +1,56 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Renakdup\tests;
 
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Yaml\Yaml;
 
-use function Renakdup\Gendiff\genDiff;
-use function Renakdup\ParseFile\parseFile;
+use function Renakdup\Gendiff\gendiff;
 
-use const Renakdup\inc\CommandLine\FORMAT_DEFAULT;
-use const Renakdup\inc\CommandLine\FORMAT_PLAIN;
-use const Renakdup\inc\CommandLine\FORMAT_JSON;
+use const Renakdup\Gendiff\FORMAT_DEFAULT;
+use const Renakdup\Gendiff\FORMAT_PLAIN;
+use const Renakdup\Gendiff\FORMAT_JSON;
 
 class GenDiffTest extends TestCase
 {
-    /**
-     * Тестируем сравнение файлов yaml, json и полученный diff типов (plain, json, default)
-     *
-     * @dataProvider inputOutputGendiffDataProvider
-     */
-    public function testGendiff($before, $after, $type, $expected)
+    protected string $fileBefore;
+    protected string $fileAfter;
+
+    protected string $pathFixtures = __DIR__ . '/fixtures';
+
+    protected function setUp(): void
     {
-        $this->assertEquals($expected, genDiff($before, $after, $type));
+        $this->fileBefore = $this->pathFixtures . '/before.json';
+        $this->fileAfter = $this->pathFixtures . '/after.json';
     }
 
-    public function inputOutputGendiffDataProvider()
+    public function testDefaultRenderFromJson()
     {
-        return [
-            [
-                'before' => parseFile(__DIR__ . '/fixtures/before.json'),
-                'after'  => parseFile(__DIR__ . '/fixtures/after.json'),
-                'type'   => FORMAT_DEFAULT,
-                'result' => file_get_contents(__DIR__ . '/fixtures/default-result.txt'),
-            ],
-            [
-                'before' => parseFile(__DIR__ . '/fixtures/before.yaml'),
-                'after'  => parseFile(__DIR__ . '/fixtures/after.yaml'),
-                'type'   => FORMAT_DEFAULT,
-                'result' => file_get_contents(__DIR__ . '/fixtures/default-result.txt'),
-            ],
-            [
-                'before' => parseFile(__DIR__ . '/fixtures/before.json'),
-                'after'  => parseFile(__DIR__ . '/fixtures/after.json'),
-                'type'   => FORMAT_PLAIN,
-                'result' => file_get_contents(__DIR__ . '/fixtures/plain-result.txt'),
-            ],
-            [
-                'before' => parseFile(__DIR__ . '/fixtures/before.json'),
-                'after'  => parseFile(__DIR__ . '/fixtures/after.json'),
-                'type'   => FORMAT_JSON,
-                'result' => file_get_contents(__DIR__ . '/fixtures/json-result.json'),
-            ]
-        ];
+        $result = file_get_contents($this->pathFixtures . '/default-result.txt');
+
+        $this->assertEquals($result, genDiff($this->fileBefore, $this->fileAfter, FORMAT_DEFAULT));
+    }
+
+    public function testDefaultRenderFromYaml()
+    {
+        $result = file_get_contents($this->pathFixtures . '/default-result.txt');
+
+        $this->assertEquals($result, genDiff($this->fileBefore, $this->fileAfter, FORMAT_DEFAULT));
+    }
+
+    public function testPlainRenderFromJson()
+    {
+        $result = file_get_contents($this->pathFixtures . '/plain-result.txt');
+
+        $this->assertEquals($result, genDiff($this->fileBefore, $this->fileAfter, FORMAT_PLAIN));
+    }
+
+    public function testJsonRenderFromJson()
+    {
+        $result = file_get_contents($this->pathFixtures . '/json-result.json');
+
+        $this->assertEquals($result, genDiff($this->fileBefore, $this->fileAfter, FORMAT_JSON));
     }
 }

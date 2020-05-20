@@ -27,13 +27,13 @@
   },
   "autoload": {
     "files": [
-      "inc/Gendiff.php",
-      "inc/formatters/DefaultFormat.php",
-      "inc/formatters/Plain.php",
-      "inc/formatters/Json.php",
-      "inc/GenerateAst.php",
-      "inc/ParseFile.php",
-      "inc/CommandLine.php"
+      "src/Run.php",
+      "src/Gendiff.php",
+      "src/formatters/DefaultFormat.php",
+      "src/formatters/Plain.php",
+      "src/formatters/Json.php",
+      "src/GenerateAst.php",
+      "src/ParseFile.php"
     ]
   },
   "scripts": {
