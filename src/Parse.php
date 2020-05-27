@@ -2,19 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Renakdup\ParseFile;
+namespace Renakdup\Parse;
 
 use Symfony\Component\Yaml\Yaml;
 
-function parseFile(string $pathToFile): object
+function parseContent(string $content, string $extension): object
 {
-    if (! file_exists($pathToFile)) {
-        throw new \Exception("File '{$pathToFile}' not found");
-    }
-
-    $content = file_get_contents($pathToFile);
-    $extension = getFileType($pathToFile);
-
     if ($extension === 'json') {
         return json_decode($content);
     } elseif ($extension === 'yaml') {
@@ -22,6 +15,15 @@ function parseFile(string $pathToFile): object
     } else {
         throw new \Exception("File's type '{$extension}' doesn't support");
     }
+}
+
+function parseFile(string $pathToFile): string
+{
+    if (! file_exists($pathToFile)) {
+        throw new \Exception("File '{$pathToFile}' not found");
+    }
+
+    return file_get_contents($pathToFile);
 }
 
 function getFileType(string $pathToFile): string

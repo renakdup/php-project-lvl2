@@ -1,32 +1,32 @@
 {
     common: {
-          setting1: Value equal
-        + setting2: Value new
-        - setting2: Value old
-        + setting3: true
-        - setting3: false
-        - setting6: {
+        setting1: Value equal
+      + setting2: Value new
+      - setting2: Value old
+      + setting3: true
+      - setting3: false
+      - setting6: {
             some_key: some_value
-          }
+        }
         setting10: {
-              sub: [1,2,3]
-            + sub2: [6,7,8]
-            - sub2: [11,22]
+            sub: [1,2,3]
+          + sub2: [6,7,8]
+          - sub2: [11,22]
         }
         deep: {
             deep2: {
                 deep3: {
-                    + deep4: value-changed
-                    - deep4: value
+                  + deep4: value-changed
+                  - deep4: value
                 }
-                + key-new: [3,5]
-                - key-new: ["test","test2",3,5]
-                + key-new2: test
+              + key-new: [3,5]
+              - key-new: ["test","test2",3,5]
+              + key-new2: test
             }
         }
-        + setting7: {
+      + setting7: {
             some_key2: some_value2
-          }
+        }
     }
-      action: value
+    action: value
 }

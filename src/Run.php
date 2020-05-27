@@ -7,7 +7,7 @@ namespace Renakdup\Gendiff;
 use Docopt;
 
 use function Renakdup\Gendiff\gendiff;
-use function Renakdup\ParseFile\parseFile;
+use function Renakdup\Parse\parseFile;
 
 const DOCOPT_VERSION = '0.1';
 

@@ -6,12 +6,17 @@ use function Renakdup\formatters\DefaultFormat\render as defaultRender;
 use function Renakdup\formatters\Json\render as jsonRender;
 use function Renakdup\formatters\Plain\render as plainRender;
 use function Renakdup\GenerateAst\generateAstDiff;
-use function Renakdup\ParseFile\parseFile;
+use function Renakdup\Parse\parseFile;
+use function Renakdup\Parse\parseContent;
+use function Renakdup\Parse\getFileType;
 
 function gendiff(string $pathFileBefore, string $pathFileAfter, string $format): string
 {
-    $contentBefore = parseFile($pathFileBefore);
-    $contentAfter = parseFile($pathFileAfter);
+    $contentRawBefore = parseFile($pathFileBefore);
+    $contentBefore = parseContent($contentRawBefore, getFileType($pathFileBefore));
+
+    $contentRawAfter = parseFile($pathFileAfter);
+    $contentAfter = parseContent($contentRawAfter, getFileType($pathFileAfter));
 
     $astDiff = generateAstDiff($contentBefore, $contentAfter);
 

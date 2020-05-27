@@ -62,7 +62,7 @@ function renderLine(string $key, $val, string $action, int $depth): string
         $val = json_encode($val);
     }
 
-    return "  {$offset}{$sign} {$key}: {$val}";
+    return "{$offset}{$sign} {$key}: {$val}";
 }
 
 function renderChildrenLines(string $key, array $children, string $action, int $depth)
@@ -86,10 +86,10 @@ function renderDiffLines(string $key, array $diff, int $depth): array
 function renderObjectLines(string $key, array $obj, string $action, int $depth): string
 {
     $sign = getSign($action);
-    $offset = str_repeat('  ', $depth + 2);
+    $offset = str_repeat('  ', $depth + 1);
     $collect = collect($obj)
         ->map(function ($item, $k) use ($depth) {
-            return renderLine($k, $item, 'equal', $depth + 2);
+            return renderLine($k, $item, 'equal', $depth + 3);
         })->toArray();
     $line = implode(PHP_EOL, $collect);
 

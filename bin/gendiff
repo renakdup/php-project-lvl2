@@ -3,8 +3,8 @@
 
 declare(strict_types=1);
 
-$fileLocal = __DIR__ . '/../../vendor/autoload.php';
-$fileGlobal = __DIR__ . '/../../../../autoload.php';
+$fileLocal = __DIR__ . '/../vendor/autoload.php';
+$fileGlobal = __DIR__ . '/../../../autoload.php';
 
 if (file_exists($fileLocal)) {
     require $fileLocal;
