@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Renakdup\tests;
+namespace CalcDiff\tests;
 
 use PHPUnit\Framework\TestCase;
 
-use function Renakdup\Gendiff\gendiff;
+use function CalcDiff\Gendiff\gendiff;
 
-use const Renakdup\Gendiff\FORMAT_DEFAULT;
-use const Renakdup\Gendiff\FORMAT_PLAIN;
-use const Renakdup\Gendiff\FORMAT_JSON;
+use const CalcDiff\Gendiff\FORMAT_DEFAULT;
+use const CalcDiff\Gendiff\FORMAT_PLAIN;
+use const CalcDiff\Gendiff\FORMAT_JSON;
 
 class GenDiffTest extends TestCase
 {

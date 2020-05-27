@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Renakdup\formatters\Json;
+namespace CalcDiff\formatters\Json;
 
 function render(array $astDiff): string
 {

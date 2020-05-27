@@ -12,6 +12,6 @@ if (file_exists($fileLocal)) {
     require $fileGlobal;
 }
 
-use function Renakdup\Gendiff\run;
+use function CalcDiff\Gendiff\run;
 
 run();

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Renakdup\Gendiff;
+namespace CalcDiff\Gendiff;
 
 use Docopt;
 
-use function Renakdup\Gendiff\gendiff;
-use function Renakdup\Parse\parseFile;
+use function CalcDiff\Gendiff\gendiff;
+use function CalcDiff\Parser\parseFile;
 
 const DOCOPT_VERSION = '0.1';
 

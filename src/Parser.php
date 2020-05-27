@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Renakdup\Parse;
+namespace CalcDiff\Parser;
 
 use Symfony\Component\Yaml\Yaml;
 

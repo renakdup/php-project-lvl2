@@ -1,14 +1,14 @@
 <?php
 
-namespace Renakdup\Gendiff;
+namespace CalcDiff\Gendiff;
 
-use function Renakdup\formatters\DefaultFormat\render as defaultRender;
-use function Renakdup\formatters\Json\render as jsonRender;
-use function Renakdup\formatters\Plain\render as plainRender;
-use function Renakdup\GenerateAst\generateAstDiff;
-use function Renakdup\Parse\parseFile;
-use function Renakdup\Parse\parseContent;
-use function Renakdup\Parse\getFileType;
+use function CalcDiff\formatters\DefaultFormat\render as defaultRender;
+use function CalcDiff\formatters\Json\render as jsonRender;
+use function CalcDiff\formatters\Plain\render as plainRender;
+use function CalcDiff\GenerateAst\generateAstDiff;
+use function CalcDiff\Parser\parseFile;
+use function CalcDiff\Parser\parseContent;
+use function CalcDiff\Parser\getFileType;
 
 function gendiff(string $pathFileBefore, string $pathFileAfter, string $format): string
 {

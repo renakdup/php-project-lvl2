@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Renakdup\formatters\Plain;
+namespace CalcDiff\formatters\Plain;
 
-use const Renakdup\GenerateAst\TYPE__OBJECT;
+use const CalcDiff\GenerateAst\TYPE__OBJECT;
 
 function getDiffLines(array $data, ?string $complexKey = null): array
 {

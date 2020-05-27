@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Renakdup\formatters\DefaultFormat;
+namespace CalcDiff\formatters\DefaultFormat;
 
-use const Renakdup\GenerateAst\TYPE__ARRAY;
-use const Renakdup\GenerateAst\TYPE__OBJECT;
-use const Renakdup\GenerateAst\TYPE__SIMPLE;
+use const CalcDiff\GenerateAst\TYPE__ARRAY;
+use const CalcDiff\GenerateAst\TYPE__OBJECT;
+use const CalcDiff\GenerateAst\TYPE__SIMPLE;
 
 function getDiffLines(array $data, int $depth = 0): array
 {

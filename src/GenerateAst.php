@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Renakdup\GenerateAst;
+namespace CalcDiff\GenerateAst;
 
 const TYPE__OBJECT = 'object';
 const TYPE__ARRAY = 'array';
