@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace CalcDiff\formatters\DefaultFormat;
+namespace CalcDiff\formatters\Tree;
 
 use const CalcDiff\GenerateAst\TYPE__ARRAY;
 use const CalcDiff\GenerateAst\TYPE__OBJECT;

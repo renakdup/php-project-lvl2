@@ -6,31 +6,21 @@ namespace CalcDiff\Gendiff;
 
 use Docopt;
 
-use function CalcDiff\Gendiff\gendiff;
-use function CalcDiff\Parser\parseFile;
-
 const DOCOPT_VERSION = '0.1';
 
-const ARG_FIRST_FILE_1 = '<firstFile>';
-const ARG_FIRST_FILE_2 = '<secondFile>';
-
-const ARG_FORMAT = '--format';
-
-const FORMAT_DEFAULT = 'default';
-const FORMAT_PLAIN = 'plain';
-const FORMAT_JSON = 'json';
-
-const DOC = "Generate diff
+const DOC = <<<DOC
+Generate diff
 
 Usage:
   gendiff (-h|--help)
   gendiff (-v|--version)
-  gendiff [" . ARG_FORMAT . " <fmt>]  " . ARG_FIRST_FILE_1 . " " . ARG_FIRST_FILE_2 . "
+  gendiff [--format <fmt>] <firstFile> <secondFile>
 
 Options:
   -h --help                     Show this screen
   -v --version                  Show version
-  " . ARG_FORMAT . " <fmt>                Report format [default: " . FORMAT_DEFAULT . "]";
+  --format <fmt>                Report format [default: tree]
+DOC;
 
 
 function run(): void
@@ -39,11 +29,11 @@ function run(): void
         'version' => DOCOPT_VERSION,
     ]);
 
-    if (isset($args[ARG_FIRST_FILE_1]) && isset($args[ARG_FIRST_FILE_2])) {
-        $filePathBefore = getFilePath($args[ARG_FIRST_FILE_1]);
-        $filePathAfter = getFilePath($args[ARG_FIRST_FILE_2]);
+    if (isset($args['<firstFile>']) && isset($args['<secondFile>'])) {
+        $filePathBefore = getFilePath($args['<firstFile>']);
+        $filePathAfter = getFilePath($args['<secondFile>']);
 
-        $format = $args[ARG_FORMAT];
+        $format = $args['--format'];
 
         echo gendiff($filePathBefore, $filePathAfter, $format);
         return;

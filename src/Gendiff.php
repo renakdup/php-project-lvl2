@@ -2,13 +2,15 @@
 
 namespace CalcDiff\Gendiff;
 
-use function CalcDiff\formatters\DefaultFormat\render as defaultRender;
+use function CalcDiff\formatters\Tree\render as defaultRender;
 use function CalcDiff\formatters\Json\render as jsonRender;
 use function CalcDiff\formatters\Plain\render as plainRender;
 use function CalcDiff\GenerateAst\generateAstDiff;
-use function CalcDiff\Parser\parseFile;
 use function CalcDiff\Parser\parseContent;
-use function CalcDiff\Parser\getFileType;
+
+const FORMAT_TREE = 'tree';
+const FORMAT_PLAIN = 'plain';
+const FORMAT_JSON = 'json';
 
 function gendiff(string $pathFileBefore, string $pathFileAfter, string $format): string
 {
@@ -27,10 +29,24 @@ function gendiff(string $pathFileBefore, string $pathFileAfter, string $format):
         case FORMAT_JSON:
             return jsonRender($astDiff);
             break;
-        case FORMAT_DEFAULT:
+        case FORMAT_TREE:
             return defaultRender($astDiff);
             break;
         default:
             throw new \Exception("Format  '{$format}' isn't correct");
     }
+}
+
+function parseFile(string $pathToFile): string
+{
+    if (! file_exists($pathToFile)) {
+        throw new \Exception("File '{$pathToFile}' not found");
+    }
+
+    return file_get_contents($pathToFile);
+}
+
+function getFileType(string $pathToFile): string
+{
+    return pathinfo($pathToFile, PATHINFO_EXTENSION);
 }

@@ -8,48 +8,52 @@ use PHPUnit\Framework\TestCase;
 
 use function CalcDiff\Gendiff\gendiff;
 
-use const CalcDiff\Gendiff\FORMAT_DEFAULT;
+use const CalcDiff\Gendiff\FORMAT_TREE;
 use const CalcDiff\Gendiff\FORMAT_PLAIN;
 use const CalcDiff\Gendiff\FORMAT_JSON;
 
 class GenDiffTest extends TestCase
 {
-    protected string $valueBeforeFilePath;
-    protected string $valueAfterFilePath;
-
     protected string $pathFixtures = __DIR__ . '/fixtures';
 
-    protected function setUp(): void
+    /**
+     * @dataProvider renderDataProvider
+     * @throws \Exception
+     */
+    public function testDefaultRenderFromJson($before, $after, $result, $format)
     {
-        $this->valueBeforeFilePath = $this->pathFixtures . '/before.json';
-        $this->valueAfterFilePath = $this->pathFixtures . '/after.json';
+        $result = file_get_contents($result);
+
+        $this->assertEquals($result, genDiff($before, $after, $format));
     }
 
-    public function testDefaultRenderFromJson()
+    public function renderDataProvider()
     {
-        $result = file_get_contents($this->pathFixtures . '/default-result.txt');
-
-        $this->assertEquals($result, genDiff($this->valueBeforeFilePath, $this->valueAfterFilePath, FORMAT_DEFAULT));
-    }
-
-    public function testDefaultRenderFromYaml()
-    {
-        $result = file_get_contents($this->pathFixtures . '/default-result.txt');
-
-        $this->assertEquals($result, genDiff($this->valueBeforeFilePath, $this->valueAfterFilePath, FORMAT_DEFAULT));
-    }
-
-    public function testPlainRenderFromJson()
-    {
-        $result = file_get_contents($this->pathFixtures . '/plain-result.txt');
-
-        $this->assertEquals($result, genDiff($this->valueBeforeFilePath, $this->valueAfterFilePath, FORMAT_PLAIN));
-    }
-
-    public function testJsonRenderFromJson()
-    {
-        $result = file_get_contents($this->pathFixtures . '/json-result.json');
-
-        $this->assertEquals($result, genDiff($this->valueBeforeFilePath, $this->valueAfterFilePath, FORMAT_JSON));
+        return [
+            [
+                $this->pathFixtures . '/before.json',
+                $this->pathFixtures . '/after.json',
+                $this->pathFixtures . '/tree-result.txt',
+                FORMAT_TREE,
+            ],
+            [
+                $this->pathFixtures . '/before.yaml',
+                $this->pathFixtures . '/after.yaml',
+                $this->pathFixtures . '/tree-result.txt',
+                FORMAT_TREE,
+            ],
+            [
+                $this->pathFixtures . '/before.json',
+                $this->pathFixtures . '/after.json',
+                $this->pathFixtures . '/plain-result.txt',
+                FORMAT_PLAIN,
+            ],
+            [
+                $this->pathFixtures . '/before.json',
+                $this->pathFixtures . '/after.json',
+                $this->pathFixtures . '/json-result.json',
+                FORMAT_JSON,
+            ],
+        ];
     }
 }

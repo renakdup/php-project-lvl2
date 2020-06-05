@@ -29,7 +29,7 @@
     "files": [
       "src/Run.php",
       "src/Gendiff.php",
-      "src/formatters/DefaultFormat.php",
+      "src/formatters/Tree.php",
       "src/formatters/Plain.php",
       "src/formatters/Json.php",
       "src/GenerateAst.php",
