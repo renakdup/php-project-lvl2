@@ -33,7 +33,7 @@
       "src/formatters/Plain.php",
       "src/formatters/Json.php",
       "src/GenerateAst.php",
-      "src/Parser.php"
+      "src/Converter.php"
     ]
   },
   "scripts": {

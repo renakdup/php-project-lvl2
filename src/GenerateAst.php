@@ -18,34 +18,25 @@ function generateAstDiff(object $dataBefore, object $dataAfter): array
     return collect($commonKeys)
         ->reduce(function ($acc, $key) use ($dataBefore, $dataAfter) {
 
-            if (
-                isset($dataBefore->$key) && isset($dataAfter->$key)
-                      && (is_object($dataBefore->$key) || is_object($dataAfter->$key))
-            ) {
+            if (! isset($dataAfter->$key)) {
+                $acc[$key] = getNode($dataBefore->$key, 'remove');
+            } elseif (! isset($dataBefore->$key)) {
+                $acc[$key] = getNode($dataAfter->$key, 'add');
+            } elseif (is_object($dataBefore->$key) || is_object($dataAfter->$key)) {
                 $acc[$key] = [
                     'action'   => 'equal',
                     'children' => generateAstDiff($dataBefore->$key, $dataAfter->$key),
                 ];
-            } elseif (
-                isset($dataAfter->$key) && isset($dataBefore->$key)
-                      && $dataAfter->$key === $dataBefore->$key
-            ) {
+            } elseif ($dataAfter->$key === $dataBefore->$key) {
                 $acc[$key] = getNode($dataBefore->$key, 'equal');
-            } elseif (
-                isset($dataAfter->$key) && isset($dataBefore->$key)
-                      && $dataAfter->$key !== $dataBefore->$key
-            ) {
+            } elseif ($dataAfter->$key !== $dataBefore->$key) {
                 $acc[$key]['diff'] = [
                     getNode($dataAfter->$key, 'add'),
                     getNode($dataBefore->$key, 'remove'),
                 ];
-            } elseif (! isset($dataAfter->$key)) {
-                $acc[$key] = getNode($dataBefore->$key, 'remove');
-            } elseif (! isset($dataBefore->$key)) {
-                $acc[$key] = getNode($dataAfter->$key, 'add');
             }
 
-            return $acc;
+            throw new \Exception("Changes' type not defined");
         });
 }
 

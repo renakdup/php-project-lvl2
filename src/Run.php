@@ -29,17 +29,12 @@ function run(): void
         'version' => DOCOPT_VERSION,
     ]);
 
-    if (isset($args['<firstFile>']) && isset($args['<secondFile>'])) {
-        $filePathBefore = getFilePath($args['<firstFile>']);
-        $filePathAfter = getFilePath($args['<secondFile>']);
+    $filePathBefore = getFilePath($args['<firstFile>']);
+    $filePathAfter = getFilePath($args['<secondFile>']);
 
-        $format = $args['--format'];
+    $format = $args['--format'];
 
-        echo gendiff($filePathBefore, $filePathAfter, $format);
-        return;
-    }
-
-    echo getCommandInfo($args);
+    echo gendiff($filePathBefore, $filePathAfter, $format);
 }
 
 function getFilePath(string $filePath): string
@@ -51,11 +46,3 @@ function getFilePath(string $filePath): string
     return $isAbsolutePath($filePath) ? $filePath : getcwd() . '/' . $filePath;
 }
 
-function getCommandInfo($args): string
-{
-    return collect($args)
-        ->map(function ($val, $key) {
-            return $key . ': ' . json_encode($val) . PHP_EOL;
-        })
-        ->implode(PHP_EOL);
-}

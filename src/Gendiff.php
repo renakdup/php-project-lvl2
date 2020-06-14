@@ -6,7 +6,7 @@ use function CalcDiff\formatters\Tree\render as defaultRender;
 use function CalcDiff\formatters\Json\render as jsonRender;
 use function CalcDiff\formatters\Plain\render as plainRender;
 use function CalcDiff\GenerateAst\generateAstDiff;
-use function CalcDiff\Parser\parseContent;
+use function CalcDiff\Converter\convert;
 
 const FORMAT_TREE = 'tree';
 const FORMAT_PLAIN = 'plain';
@@ -15,10 +15,10 @@ const FORMAT_JSON = 'json';
 function gendiff(string $pathFileBefore, string $pathFileAfter, string $format): string
 {
     $contentRawBefore = parseFile($pathFileBefore);
-    $contentBefore = parseContent($contentRawBefore, getFileType($pathFileBefore));
+    $contentBefore = convert($contentRawBefore, getFileType($pathFileBefore));
 
     $contentRawAfter = parseFile($pathFileAfter);
-    $contentAfter = parseContent($contentRawAfter, getFileType($pathFileAfter));
+    $contentAfter = convert($contentRawAfter, getFileType($pathFileAfter));
 
     $astDiff = generateAstDiff($contentBefore, $contentAfter);
 
