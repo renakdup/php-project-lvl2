@@ -4,60 +4,64 @@ declare(strict_types=1);
 
 namespace CalcDiff\formatters\Plain;
 
-use const CalcDiff\GenerateAst\TYPE__OBJECT;
-
-function getDiffLines(array $data, ?string $complexKey = null): array
+function getDiffLines(array $data): array
 {
-    $keys = array_keys($data);
+    $generateLines = function ($data, ?string $complexKey = null) use (&$generateLines): array {
+        $keys = array_keys($data);
 
-    return collect($keys)
-        ->reduce(function ($acc, $key) use ($data, $complexKey) {
-            $item = $data[$key];
+        return collect($keys)
+            ->reduce(function ($acc, $key) use ($data, $complexKey, $generateLines) {
+                $item = $data[$key];
 
-            $fullKey = $complexKey ? $complexKey . '.' . $key : $key;
+                $key = isset($item['diff']) ? $item['diff'][0]['key'] : $item['key'];
+                $fullKey = $complexKey ? $complexKey . '.' . $key : $key;
 
-            if (isset($item['children'])) {
-                return array_merge($acc, getDiffLines($item['children'], $fullKey));
-            } elseif (isset($item['diff'])) {
-                $acc[] = renderLine($fullKey, 'add', $item['diff'][0], $item['diff'][1]);
+                if (isset($item['children'])) {
+                    $mr = $generateLines($item['children'], $fullKey);
+                    return array_merge($acc, $mr);
+                } elseif (isset($item['diff'])) {
+                    $acc[] = renderLine($fullKey, 'add', $item['diff'][0]['value'], $item['diff'][1]['value']);
+                    return $acc;
+                } elseif (isset($item['value']) && is_object($item['value'])) {
+                    $acc[] = renderLine($fullKey, $item['compare_result'], $item['value']);
+                    return $acc;
+                } elseif (isset($item['value']) && $item['compare_result'] !== 'equal') {
+                    $acc[] = renderLine($fullKey, $item['compare_result'], $item['value']);
+                    return $acc;
+                }
+
                 return $acc;
-            } elseif (isset($item['value']) && isset($item['type']) && $item['type'] === TYPE__OBJECT) {
-                $acc[] = renderLine($fullKey, $item['action'], $item);
-                return $acc;
-            } elseif (isset($item['value']) && $item['action'] !== 'equal') {
-                $acc[] = renderLine($fullKey, $item['action'], $item);
-                return $acc;
-            }
+            }, []);
+    };
 
-            return $acc;
-        }, []);
+    return $generateLines($data);
 }
 
-function prepareVal($val, ?string $type = null)
+function prepareVal($val)
 {
-    if ($type === TYPE__OBJECT) {
-        $val = 'complex value';
-    } elseif (is_bool($val)) {
+    if (is_bool($val)) {
         $val = $val ? 'true' : 'false';
     } elseif (is_array($val)) {
         $val = json_encode($val);
+    } elseif (is_object($val)) {
+        $val = 'complex value';
     }
 
     return $val;
 }
 
-function renderLine(string $key, string $action, array $itemNew, ?array $itemOld = null): string
+function renderLine(string $key, string $compare_result, $valAfter, $valBefore = null): string
 {
-    $valNew = prepareVal($itemNew['value'], $itemNew['type']);
+    $valAfter = prepareVal($valAfter);
 
-    if ($action === 'add' && $itemOld) {
-        $valOld = prepareVal($itemOld['value'], $itemOld['type']);
-        $result = "Property '{$key}' was changed. From '{$valOld}' to '{$valNew}'";
-    } elseif ($action === 'add') {
-        $result = "Property '{$key}' was added with value: '{$valNew}'";
-    } elseif ($action === 'remove') {
+    if ($compare_result === 'add' && $valBefore !== null) {
+        $valBefore = prepareVal($valBefore);
+        $result = "Property '{$key}' was changed. From '{$valBefore}' to '{$valAfter}'";
+    } elseif ($compare_result === 'add') {
+        $result = "Property '{$key}' was added with value: '{$valAfter}'";
+    } elseif ($compare_result === 'remove') {
         $result = "Property '{$key}' was removed";
-    } elseif ($action === 'equal') {
+    } elseif ($compare_result === 'equal') {
         $result = '';
     } else {
         throw new \Exception("Condition not defined");

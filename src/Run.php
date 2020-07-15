@@ -45,4 +45,3 @@ function getFilePath(string $filePath): string
 
     return $isAbsolutePath($filePath) ? $filePath : getcwd() . '/' . $filePath;
 }
-

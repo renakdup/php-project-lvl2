@@ -4,34 +4,42 @@ declare(strict_types=1);
 
 namespace CalcDiff\formatters\Tree;
 
-use const CalcDiff\GenerateAst\TYPE__ARRAY;
-use const CalcDiff\GenerateAst\TYPE__OBJECT;
-use const CalcDiff\GenerateAst\TYPE__SIMPLE;
-
-function getDiffLines(array $data, int $depth = 0): array
+function getDiffLines(array $data): array
 {
-    $keys = array_keys($data);
+    $generateLines = function ($data, int $depth = 0) use (&$generateLines): array {
+        $keys = array_keys($data);
 
-    return collect($keys)
-        ->reduce(function ($acc, $key) use ($data, $depth) {
-            $item = $data[$key];
+        return collect($keys)
+            ->reduce(function ($acc, $index) use ($data, $depth, $generateLines) {
+                $item = $data[$index];
 
-            if (isset($item['children'])) {
-                $acc[] = renderChildrenLines($key, $item['children'], $item['action'], $depth);
-                return $acc;
-            } elseif (isset($item['diff'])) {
-                $diff = renderDiffLines($key, $item['diff'], $depth);
-                return array_merge($acc, $diff);
-            } elseif (isset($item['value']) && $item['type'] === TYPE__OBJECT) {
-                $acc[] = renderObjectLines($key, json_decode($item['value'], true), $item['action'], $depth);
-                return $acc;
-            } elseif (isset($item['type']) && ($item['type'] === TYPE__SIMPLE || $item['type'] === TYPE__ARRAY)) {
-                $acc[] = renderKeyValueLines($key, $item['value'], $item['action'], $depth);
-                return $acc;
-            }
+                if (isset($item['diff'])) {
+                    $diff = collect($item['diff'])
+                        ->map(function ($item) use ($depth) {
+                            return renderLine($item['key'], $item['value'], $item['compare_result'], $depth + 1);
+                        })
+                        ->all();
 
-            return $acc;
-        }, []);
+                    return array_merge($acc, $diff);
+                }
+
+                $key = $data[$index]['key'];
+
+                if (isset($item['children'])) {
+                    $children = $generateLines($item['children'], $depth + 2);
+                    $acc[] = renderChildrenLines($key, $children, $item['compare_result'], $depth);
+                    return $acc;
+                } elseif (isset($item['value']) && is_object($item['value'])) {
+                    $acc[] = renderObjectLines($key, (array)$item['value'], $item['compare_result'], $depth);
+                    return $acc;
+                } else {
+                    $acc[] = renderKeyValueLines($key, $item['value'], $item['compare_result'], $depth);
+                    return $acc;
+                }
+            }, []);
+    };
+
+    return $generateLines($data);
 }
 
 function getSign(string $action): string
@@ -69,18 +77,9 @@ function renderChildrenLines(string $key, array $children, string $action, int $
 {
     $sign = getSign($action);
     $offset = str_repeat('  ', $depth + 1);
-    $items = getDiffLines($children, $depth + 2);
-    $line = implode(PHP_EOL, $items);
+    $line = implode(PHP_EOL, $children);
 
     return "{$offset}{$sign} {$key}: {\n{$line}\n  {$offset}}";
-}
-
-function renderDiffLines(string $key, array $diff, int $depth): array
-{
-    return collect($diff)
-        ->map(function ($item) use ($key, $depth) {
-            return renderLine($key, $item['value'], $item['action'], $depth + 1);
-        })->toArray();
 }
 
 function renderObjectLines(string $key, array $obj, string $action, int $depth): string
@@ -96,8 +95,10 @@ function renderObjectLines(string $key, array $obj, string $action, int $depth):
     return "{$offset}{$sign} {$key}: {\n{$line}\n  {$offset}}";
 }
 
-function renderKeyValueLines(string $key, string $value, string $action, int $depth): string
+function renderKeyValueLines(string $key, $value, string $action, int $depth): string
 {
+    $value = is_array($value) ? json_encode($value) : $value;
+
     return renderLine($key, $value, $action, $depth + 1);
 }
 
