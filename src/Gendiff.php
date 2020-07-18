@@ -2,11 +2,11 @@
 
 namespace CalcDiff\Gendiff;
 
-use function CalcDiff\formatters\Tree\render as defaultRender;
-use function CalcDiff\formatters\Json\render as jsonRender;
-use function CalcDiff\formatters\Plain\render as plainRender;
+use function CalcDiff\formatters\Tree\render as renderTree;
+use function CalcDiff\formatters\Json\render as renderJson;
+use function CalcDiff\formatters\Plain\render as renderPlain;
 use function CalcDiff\GenerateAst\generateAstDiff;
-use function CalcDiff\Converter\convert;
+use function CalcDiff\Converter\parser;
 
 const FORMAT_TREE = 'tree';
 const FORMAT_PLAIN = 'plain';
@@ -14,30 +14,30 @@ const FORMAT_JSON = 'json';
 
 function gendiff(string $pathFileBefore, string $pathFileAfter, string $format): string
 {
-    $contentRawBefore = parseFile($pathFileBefore);
-    $contentBefore = convert($contentRawBefore, getFileType($pathFileBefore));
+    $contentRawBefore = readFile($pathFileBefore);
+    $contentBefore = parser($contentRawBefore, getFileType($pathFileBefore));
 
-    $contentRawAfter = parseFile($pathFileAfter);
-    $contentAfter = convert($contentRawAfter, getFileType($pathFileAfter));
+    $contentRawAfter = readFile($pathFileAfter);
+    $contentAfter = parser($contentRawAfter, getFileType($pathFileAfter));
 
     $astDiff = generateAstDiff($contentBefore, $contentAfter);
 
     switch ($format) {
         case FORMAT_PLAIN:
-            return plainRender($astDiff);
+            return renderPlain($astDiff);
             break;
         case FORMAT_JSON:
-            return jsonRender($astDiff);
+            return renderJson($astDiff);
             break;
         case FORMAT_TREE:
-            return defaultRender($astDiff);
+            return renderTree($astDiff);
             break;
         default:
             throw new \Exception("Format  '{$format}' isn't correct");
     }
 }
 
-function parseFile(string $pathToFile): string
+function readFile(string $pathToFile): string
 {
     if (! file_exists($pathToFile)) {
         throw new \Exception("File '{$pathToFile}' not found");

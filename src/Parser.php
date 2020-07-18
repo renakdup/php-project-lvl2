@@ -6,7 +6,7 @@ namespace CalcDiff\Converter;
 
 use Symfony\Component\Yaml\Yaml;
 
-function convert(string $content, string $dataType): object
+function parser(string $content, string $dataType): object
 {
     if ($dataType === 'json') {
         return json_decode($content);

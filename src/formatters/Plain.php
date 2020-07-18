@@ -23,10 +23,10 @@ function getDiffLines(array $data): array
                     $acc[] = renderLine($fullKey, 'add', $item['diff'][0]['value'], $item['diff'][1]['value']);
                     return $acc;
                 } elseif (isset($item['value']) && is_object($item['value'])) {
-                    $acc[] = renderLine($fullKey, $item['compare_result'], $item['value']);
+                    $acc[] = renderLine($fullKey, $item['type'], $item['value']);
                     return $acc;
-                } elseif (isset($item['value']) && $item['compare_result'] !== 'equal') {
-                    $acc[] = renderLine($fullKey, $item['compare_result'], $item['value']);
+                } elseif (isset($item['value']) && $item['type'] !== 'equal') {
+                    $acc[] = renderLine($fullKey, $item['type'], $item['value']);
                     return $acc;
                 }
 
@@ -50,18 +50,18 @@ function prepareVal($val)
     return $val;
 }
 
-function renderLine(string $key, string $compare_result, $valAfter, $valBefore = null): string
+function renderLine(string $key, string $type, $valAfter, $valBefore = null): string
 {
     $valAfter = prepareVal($valAfter);
 
-    if ($compare_result === 'add' && $valBefore !== null) {
+    if ($type === 'add' && $valBefore !== null) {
         $valBefore = prepareVal($valBefore);
         $result = "Property '{$key}' was changed. From '{$valBefore}' to '{$valAfter}'";
-    } elseif ($compare_result === 'add') {
+    } elseif ($type === 'add') {
         $result = "Property '{$key}' was added with value: '{$valAfter}'";
-    } elseif ($compare_result === 'remove') {
+    } elseif ($type === 'remove') {
         $result = "Property '{$key}' was removed";
-    } elseif ($compare_result === 'equal') {
+    } elseif ($type === 'equal') {
         $result = '';
     } else {
         throw new \Exception("Condition not defined");

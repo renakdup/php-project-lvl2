@@ -16,7 +16,7 @@ function getDiffLines(array $data): array
                 if (isset($item['diff'])) {
                     $diff = collect($item['diff'])
                         ->map(function ($item) use ($depth) {
-                            return renderLine($item['key'], $item['value'], $item['compare_result'], $depth + 1);
+                            return renderLine($item['key'], $item['value'], $item['type'], $depth + 1);
                         })
                         ->all();
 
@@ -27,13 +27,13 @@ function getDiffLines(array $data): array
 
                 if (isset($item['children'])) {
                     $children = $generateLines($item['children'], $depth + 2);
-                    $acc[] = renderChildrenLines($key, $children, $item['compare_result'], $depth);
+                    $acc[] = renderChildrenLines($key, $children, $item['type'], $depth);
                     return $acc;
                 } elseif (isset($item['value']) && is_object($item['value'])) {
-                    $acc[] = renderObjectLines($key, (array)$item['value'], $item['compare_result'], $depth);
+                    $acc[] = renderObjectLines($key, (array)$item['value'], $item['type'], $depth);
                     return $acc;
                 } else {
-                    $acc[] = renderKeyValueLines($key, $item['value'], $item['compare_result'], $depth);
+                    $acc[] = renderKeyValueLines($key, $item['value'], $item['type'], $depth);
                     return $acc;
                 }
             }, []);

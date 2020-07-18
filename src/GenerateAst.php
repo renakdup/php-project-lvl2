@@ -19,11 +19,7 @@ function generateAstDiff(object $dataBefore, object $dataAfter): array
             } elseif (! isset($dataBefore->$key)) {
                 return getNode($key, $dataAfter->$key, 'add');
             } elseif (is_object($dataBefore->$key) || is_object($dataAfter->$key)) {
-                return [
-                    'key' => $key,
-                    'compare_result' => 'equal',
-                    'children' => generateAstDiff($dataBefore->$key, $dataAfter->$key),
-                ];
+                return getNode($key, null, 'equal', generateAstDiff($dataBefore->$key, $dataAfter->$key));
             } elseif ($dataAfter->$key === $dataBefore->$key) {
                 return getNode($key, $dataBefore->$key, 'equal');
             } elseif ($dataAfter->$key !== $dataBefore->$key) {
@@ -40,11 +36,18 @@ function generateAstDiff(object $dataBefore, object $dataAfter): array
         ->all();
 }
 
-function getNode(string $key, $value, string $action): array
+function getNode(string $key, $value, string $type, ?array $children = null): array
 {
-    return [
+    $node = [
         'key' => $key,
-        'compare_result' => $action,
-        'value' => $value,
+        'type' => $type,
     ];
+
+    if ($value !== null) {
+        $node['value'] = $value;
+    } elseif ($children !== null) {
+        $node['children'] = $children;
+    }
+
+    return $node;
 }

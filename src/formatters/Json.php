@@ -6,7 +6,5 @@ namespace CalcDiff\formatters\Json;
 
 function render(array $astDiff): string
 {
-    $lines = json_encode($astDiff);
-
-    return $lines . PHP_EOL;
+    return json_encode($astDiff);
 }
