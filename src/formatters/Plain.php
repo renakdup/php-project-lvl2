@@ -23,8 +23,8 @@ function getDiffLines(array $data): array
                 $type = $item['type'];
 
                 if ($type === NODE_TYPE_CHILDREN) {
-                    $mr = $generateLines($item['children'], $fullKey);
-                    return array_merge($acc, $mr);
+                    $lines = $generateLines($item['children'], $fullKey);
+                    return array_merge($acc, $lines);
                 } elseif ($type === NODE_TYPE_CHANGED) {
                     $acc[] = renderLine(
                         $fullKey,

@@ -35,7 +35,8 @@ function generateAstDiff(object $dataBefore, object $dataAfter): array
                 ], NODE_TYPE_CHANGED);
             }
 
-            throw new \Exception("Changes' type not defined");
+            throw new \Exception("Changes' type not defined for key: {$key} and dataBefore: "
+                . var_export($dataBefore) . "and dataAfter: " . var_dump($dataAfter));
         })
         ->all();
 }
