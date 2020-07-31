@@ -4,6 +4,12 @@ declare(strict_types=1);
 
 namespace CalcDiff\formatters\Plain;
 
+use const CalcDiff\GenerateAst\NODE_TYPE_ADDED;
+use const CalcDiff\GenerateAst\NODE_TYPE_REMOVED;
+use const CalcDiff\GenerateAst\NODE_TYPE_EQUAL;
+use const CalcDiff\GenerateAst\NODE_TYPE_CHANGED;
+use const CalcDiff\GenerateAst\NODE_TYPE_CHILDREN;
+
 function getDiffLines(array $data): array
 {
     $generateLines = function ($data, ?string $complexKey = null) use (&$generateLines): array {
@@ -12,20 +18,25 @@ function getDiffLines(array $data): array
         return collect($keys)
             ->reduce(function ($acc, $key) use ($data, $complexKey, $generateLines) {
                 $item = $data[$key];
-
                 $key = isset($item['diff']) ? $item['diff'][0]['key'] : $item['key'];
                 $fullKey = $complexKey ? $complexKey . '.' . $key : $key;
+                $type = $item['type'];
 
-                if (isset($item['children'])) {
+                if ($type === NODE_TYPE_CHILDREN) {
                     $mr = $generateLines($item['children'], $fullKey);
                     return array_merge($acc, $mr);
-                } elseif (isset($item['diff'])) {
-                    $acc[] = renderLine($fullKey, 'add', $item['diff'][0]['value'], $item['diff'][1]['value']);
+                } elseif ($type === NODE_TYPE_CHANGED) {
+                    $acc[] = renderLine(
+                        $fullKey,
+                        NODE_TYPE_CHANGED,
+                        $item['value'][NODE_TYPE_ADDED],
+                        $item['value'][NODE_TYPE_REMOVED]
+                    );
                     return $acc;
-                } elseif (isset($item['value']) && is_object($item['value'])) {
+                } elseif (is_object($item['value'])) {
                     $acc[] = renderLine($fullKey, $item['type'], $item['value']);
                     return $acc;
-                } elseif (isset($item['value']) && $item['type'] !== 'equal') {
+                } elseif ($item['type'] !== NODE_TYPE_EQUAL) {
                     $acc[] = renderLine($fullKey, $item['type'], $item['value']);
                     return $acc;
                 }
@@ -54,14 +65,14 @@ function renderLine(string $key, string $type, $valAfter, $valBefore = null): st
 {
     $valAfter = prepareVal($valAfter);
 
-    if ($type === 'add' && $valBefore !== null) {
+    if ($type === NODE_TYPE_CHANGED) {
         $valBefore = prepareVal($valBefore);
         $result = "Property '{$key}' was changed. From '{$valBefore}' to '{$valAfter}'";
-    } elseif ($type === 'add') {
+    } elseif ($type === NODE_TYPE_ADDED) {
         $result = "Property '{$key}' was added with value: '{$valAfter}'";
-    } elseif ($type === 'remove') {
+    } elseif ($type === NODE_TYPE_REMOVED) {
         $result = "Property '{$key}' was removed";
-    } elseif ($type === 'equal') {
+    } elseif ($type === NODE_TYPE_EQUAL) {
         $result = '';
     } else {
         throw new \Exception("Condition not defined");

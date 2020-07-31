@@ -4,6 +4,12 @@ declare(strict_types=1);
 
 namespace CalcDiff\formatters\Tree;
 
+use const CalcDiff\GenerateAst\NODE_TYPE_ADDED;
+use const CalcDiff\GenerateAst\NODE_TYPE_REMOVED;
+use const CalcDiff\GenerateAst\NODE_TYPE_EQUAL;
+use const CalcDiff\GenerateAst\NODE_TYPE_CHANGED;
+use const CalcDiff\GenerateAst\NODE_TYPE_CHILDREN;
+
 function getDiffLines(array $data): array
 {
     $generateLines = function ($data, int $depth = 0) use (&$generateLines): array {
@@ -12,24 +18,19 @@ function getDiffLines(array $data): array
         return collect($keys)
             ->reduce(function ($acc, $index) use ($data, $depth, $generateLines) {
                 $item = $data[$index];
+                $key = $item['key'];
+                $type = $item['type'];
 
-                if (isset($item['diff'])) {
-                    $diff = collect($item['diff'])
-                        ->map(function ($item) use ($depth) {
-                            return renderLine($item['key'], $item['value'], $item['type'], $depth + 1);
-                        })
-                        ->all();
+                if ($type === NODE_TYPE_CHANGED) {
+                    $newLine = renderLine($item['key'], $item['value'][NODE_TYPE_ADDED], NODE_TYPE_ADDED, $depth + 1);
+                    $oldLine = renderLine($item['key'], $item['value'][NODE_TYPE_REMOVED], NODE_TYPE_REMOVED, $depth + 1);
 
-                    return array_merge($acc, $diff);
-                }
-
-                $key = $data[$index]['key'];
-
-                if (isset($item['children'])) {
+                    return array_merge($acc, [$newLine, $oldLine]);
+                } elseif ($type === NODE_TYPE_CHILDREN) {
                     $children = $generateLines($item['children'], $depth + 2);
                     $acc[] = renderChildrenLines($key, $children, $item['type'], $depth);
                     return $acc;
-                } elseif (isset($item['value']) && is_object($item['value'])) {
+                } elseif (is_object($item['value'])) {
                     $acc[] = renderObjectLines($key, (array)$item['value'], $item['type'], $depth);
                     return $acc;
                 } else {
@@ -45,13 +46,16 @@ function getDiffLines(array $data): array
 function getSign(string $action): string
 {
     switch ($action) {
-        case 'add':
+        case NODE_TYPE_ADDED:
             return '+';
             break;
-        case 'remove':
+        case NODE_TYPE_REMOVED:
             return '-';
             break;
-        case 'equal':
+        case NODE_TYPE_EQUAL:
+            return ' ';
+            break;
+        case NODE_TYPE_CHILDREN:
             return ' ';
             break;
         default:
@@ -88,7 +92,7 @@ function renderObjectLines(string $key, array $obj, string $action, int $depth):
     $offset = str_repeat('  ', $depth + 1);
     $collect = collect($obj)
         ->map(function ($item, $k) use ($depth) {
-            return renderLine($k, $item, 'equal', $depth + 3);
+            return renderLine($k, $item, NODE_TYPE_EQUAL, $depth + 3);
         })->toArray();
     $line = implode(PHP_EOL, $collect);
 
