@@ -22,8 +22,18 @@ function getDiffLines(array $data): array
                 $type = $item['type'];
 
                 if ($type === NODE_TYPE_CHANGED) {
-                    $newLine = renderLine($item['key'], $item['value'][NODE_TYPE_ADDED], NODE_TYPE_ADDED, $depth + 1);
-                    $oldLine = renderLine($item['key'], $item['value'][NODE_TYPE_REMOVED], NODE_TYPE_REMOVED, $depth + 1);
+                    $newLine = renderLine(
+                        $item['key'],
+                        $item['value'][NODE_TYPE_ADDED],
+                        NODE_TYPE_ADDED,
+                        $depth + 1
+                    );
+                    $oldLine = renderLine(
+                        $item['key'],
+                        $item['value'][NODE_TYPE_REMOVED],
+                        NODE_TYPE_REMOVED,
+                        $depth + 1
+                    );
 
                     return array_merge($acc, [$newLine, $oldLine]);
                 } elseif ($type === NODE_TYPE_CHILDREN) {
