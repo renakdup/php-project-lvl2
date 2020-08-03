@@ -21,29 +21,35 @@ function getDiffLines(array $data): array
                 $key = $item['key'];
                 $type = $item['type'];
 
-                if ($type === NODE_TYPE_CHANGED) {
-                    $newLine = renderLine(
-                        $item['key'],
-                        $item['value'][NODE_TYPE_ADDED],
-                        NODE_TYPE_ADDED,
-                        $depth + 1
-                    );
-                    $oldLine = renderLine(
-                        $item['key'],
-                        $item['value'][NODE_TYPE_REMOVED],
-                        NODE_TYPE_REMOVED,
-                        $depth + 1
-                    );
-                    return array_merge($acc, [$newLine, $oldLine]);
-                } elseif ($type === NODE_TYPE_CHILDREN) {
-                    $children = $generateLines($item['children'], $depth + 2);
-                    $acc[] = renderChildrenLines($key, $children, $item['type'], $depth);
-                    return $acc;
-                } elseif ($type === NODE_TYPE_ADDED || $type === NODE_TYPE_REMOVED || $type === NODE_TYPE_EQUAL) {
-                    $acc[] = is_object($item['value'])
-                        ? renderObjectLines($key, (array)$item['value'], $item['type'], $depth)
-                        : renderKeyValueLines($key, $item['value'], $item['type'], $depth);
-                    return $acc;
+                switch ($type) {
+                    case NODE_TYPE_CHANGED:
+                        $newLine = renderLine(
+                            $item['key'],
+                            $item['value'][NODE_TYPE_ADDED],
+                            NODE_TYPE_ADDED,
+                            $depth + 1
+                        );
+                        $oldLine = renderLine(
+                            $item['key'],
+                            $item['value'][NODE_TYPE_REMOVED],
+                            NODE_TYPE_REMOVED,
+                            $depth + 1
+                        );
+                        return array_merge($acc, [$newLine, $oldLine]);
+                        break;
+                    case NODE_TYPE_CHILDREN:
+                        $children = $generateLines($item['children'], $depth + 2);
+                        $acc[] = renderChildrenLines($key, $children, $item['type'], $depth);
+                        return $acc;
+                    case NODE_TYPE_ADDED:
+                    case NODE_TYPE_REMOVED:
+                    case NODE_TYPE_EQUAL:
+                        $acc[] = is_object($item['value'])
+                            ? renderObjectLines($key, (array)$item['value'], $item['type'], $depth)
+                            : renderKeyValueLines($key, $item['value'], $item['type'], $depth);
+                        return $acc;
+                    default:
+                        throw new \Exception("Item's type not correct: '{$type}'");
                 }
             }, []);
     };
@@ -61,8 +67,6 @@ function getSign(string $action): string
             return '-';
             break;
         case NODE_TYPE_EQUAL:
-            return ' ';
-            break;
         case NODE_TYPE_CHILDREN:
             return ' ';
             break;
