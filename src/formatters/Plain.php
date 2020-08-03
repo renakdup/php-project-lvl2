@@ -13,36 +13,36 @@ use const CalcDiff\GenerateAst\NODE_TYPE_CHILDREN;
 function getDiffLines(array $data): array
 {
     $generateLines = function ($data, ?string $complexKey = null) use (&$generateLines): array {
-        $keys = array_keys($data);
+        return collect($data)
+            ->map(function ($item) use ($data, $complexKey, $generateLines) {
+                $key = $complexKey ? $complexKey . '.' . $item['key'] : $item['key'];
 
-        return collect($keys)
-            ->reduce(function ($acc, $key) use ($data, $complexKey, $generateLines) {
-                $item = $data[$key];
-                $key = isset($item['diff']) ? $item['diff'][0]['key'] : $item['key'];
-                $fullKey = $complexKey ? $complexKey . '.' . $key : $key;
-                $type = $item['type'];
-
-                if ($type === NODE_TYPE_CHILDREN) {
-                    $lines = $generateLines($item['children'], $fullKey);
-                    return array_merge($acc, $lines);
-                } elseif ($type === NODE_TYPE_CHANGED) {
-                    $acc[] = renderLine(
-                        $fullKey,
-                        NODE_TYPE_CHANGED,
-                        $item['value'][NODE_TYPE_ADDED],
-                        $item['value'][NODE_TYPE_REMOVED]
-                    );
-                    return $acc;
-                } elseif (is_object($item['value'])) {
-                    $acc[] = renderLine($fullKey, $item['type'], $item['value']);
-                    return $acc;
-                } elseif ($item['type'] !== NODE_TYPE_EQUAL) {
-                    $acc[] = renderLine($fullKey, $item['type'], $item['value']);
-                    return $acc;
+                switch ($item['type']) {
+                    case NODE_TYPE_CHILDREN:
+                        return $generateLines($item['children'], $key);
+                        break;
+                    case NODE_TYPE_CHANGED:
+                        $valOld = prepareVal($item['value'][NODE_TYPE_REMOVED]);
+                        $valNew = prepareVal($item['value'][NODE_TYPE_ADDED]);
+                        return "Property '{$key}' was changed. From '{$valOld}' to '{$valNew}'";
+                    case NODE_TYPE_ADDED:
+                        $val = prepareVal($item['value']);
+                        return "Property '{$key}' was added with value: '{$val}'";
+                        break;
+                    case NODE_TYPE_REMOVED:
+                        return "Property '{$key}' was removed";
+                        break;
+                    case NODE_TYPE_EQUAL:
+                        return null;
+                    default:
+                        throw new \Exception("Item's type not correct: '{$item['type']}'");
                 }
-
-                return $acc;
-            }, []);
+            })
+            ->flatten()
+            ->reject(function ($value) {
+                return $value === null;
+            })
+            ->all();
     };
 
     return $generateLines($data);
@@ -59,26 +59,6 @@ function prepareVal($val)
     }
 
     return $val;
-}
-
-function renderLine(string $key, string $type, $valAfter, $valBefore = null): string
-{
-    $valAfter = prepareVal($valAfter);
-
-    if ($type === NODE_TYPE_CHANGED) {
-        $valBefore = prepareVal($valBefore);
-        $result = "Property '{$key}' was changed. From '{$valBefore}' to '{$valAfter}'";
-    } elseif ($type === NODE_TYPE_ADDED) {
-        $result = "Property '{$key}' was added with value: '{$valAfter}'";
-    } elseif ($type === NODE_TYPE_REMOVED) {
-        $result = "Property '{$key}' was removed";
-    } elseif ($type === NODE_TYPE_EQUAL) {
-        $result = '';
-    } else {
-        throw new \Exception("Condition not defined");
-    }
-
-    return $result;
 }
 
 function render(array $astDiff): string
