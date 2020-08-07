@@ -22,8 +22,8 @@ function getDiffLines(array $data): array
                         return $generateLines($item['children'], $key);
                         break;
                     case NODE_TYPE_CHANGED:
-                        $valOld = prepareVal($item['value'][NODE_TYPE_REMOVED]);
-                        $valNew = prepareVal($item['value'][NODE_TYPE_ADDED]);
+                        $valOld = prepareVal($item['valueOld']);
+                        $valNew = prepareVal($item['valueNew']);
                         return "Property '{$key}' was changed. From '{$valOld}' to '{$valNew}'";
                     case NODE_TYPE_ADDED:
                         $val = prepareVal($item['value']);
@@ -38,14 +38,15 @@ function getDiffLines(array $data): array
                         throw new \Exception("Item's type not correct: '{$item['type']}'");
                 }
             })
-            ->flatten()
-            ->reject(function ($value) {
-                return $value === null;
-            })
             ->all();
     };
 
-    return $generateLines($data);
+    return collect($generateLines($data))
+        ->flatten()
+        ->reject(function ($value) {
+            return $value === null;
+        })
+        ->all();
 }
 
 function prepareVal($val)
@@ -65,5 +66,5 @@ function render(array $astDiff): string
 {
     $lines = getDiffLines($astDiff);
 
-    return implode(PHP_EOL, $lines) . PHP_EOL;
+    return implode("\n", $lines) . "\n";
 }

@@ -25,14 +25,20 @@ function generateAstDiff(object $dataBefore, object $dataAfter): array
             } elseif (! isset($dataBefore->$key)) {
                 return getNode($key, $dataAfter->$key, NODE_TYPE_ADDED);
             } elseif (is_object($dataBefore->$key) || is_object($dataAfter->$key)) {
-                return getNode($key, null, NODE_TYPE_CHILDREN, generateAstDiff($dataBefore->$key, $dataAfter->$key));
+                return getNode(
+                    $key,
+                    null,
+                    NODE_TYPE_CHILDREN,
+                    null,
+                    generateAstDiff($dataBefore->$key, $dataAfter->$key)
+                );
             } elseif ($dataAfter->$key === $dataBefore->$key) {
                 return getNode($key, $dataBefore->$key, NODE_TYPE_EQUAL);
             } elseif ($dataAfter->$key !== $dataBefore->$key) {
-                return getNode($key, [
-                    NODE_TYPE_REMOVED => $dataBefore->$key,
-                    NODE_TYPE_ADDED => $dataAfter->$key,
-                ], NODE_TYPE_CHANGED);
+                return getNode($key, null, NODE_TYPE_CHANGED, [
+                    'old' => $dataBefore->$key,
+                    'new' => $dataAfter->$key,
+                ]);
             }
 
             throw new \Exception("Changes' type not defined for key: {$key} and dataBefore: "
@@ -41,12 +47,20 @@ function generateAstDiff(object $dataBefore, object $dataAfter): array
         ->all();
 }
 
-function getNode(string $key, $value, string $type, ?array $children = null): array
+function getNode(string $key, $value, string $type, $diffValue = null, ?array $children = null): array
 {
-    return [
+    $node = [
         'key' => $key,
         'type' => $type,
-        'value' => $value,
         'children' => $children,
     ];
+
+    if ($diffValue === null) {
+        $node['value'] = $value;
+    } else {
+        $node['valueOld'] = $diffValue['old'];
+        $node['valueNew'] = $diffValue['new'];
+    }
+
+    return $node;
 }

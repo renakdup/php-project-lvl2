@@ -25,28 +25,41 @@ function getDiffLines(array $data): array
                     case NODE_TYPE_CHANGED:
                         $newLine = renderLine(
                             $item['key'],
-                            $item['value'][NODE_TYPE_ADDED],
-                            NODE_TYPE_ADDED,
+                            $item['valueNew'],
+                            '+',
                             $depth + 1
                         );
                         $oldLine = renderLine(
                             $item['key'],
-                            $item['value'][NODE_TYPE_REMOVED],
-                            NODE_TYPE_REMOVED,
+                            $item['valueOld'],
+                            '-',
                             $depth + 1
                         );
                         return array_merge($acc, [$newLine, $oldLine]);
                         break;
                     case NODE_TYPE_CHILDREN:
+                        $sign = ' ';
                         $children = $generateLines($item['children'], $depth + 2);
-                        $acc[] = renderChildrenLines($key, $children, $item['type'], $depth);
+                        $acc[] = renderChildrenLines($key, $children, $sign, $depth);
                         return $acc;
                     case NODE_TYPE_ADDED:
-                    case NODE_TYPE_REMOVED:
-                    case NODE_TYPE_EQUAL:
+                        $sign = '+';
                         $acc[] = is_object($item['value'])
-                            ? renderObjectLines($key, (array)$item['value'], $item['type'], $depth)
-                            : renderKeyValueLines($key, $item['value'], $item['type'], $depth);
+                            ? renderObjectValue($key, (array)$item['value'], $sign, $depth)
+                            : renderKeyValueLines($key, $item['value'], $sign, $depth);
+                        return $acc;
+                        break;
+                    case NODE_TYPE_REMOVED:
+                        $sign = '-';
+                        $acc[] = is_object($item['value'])
+                            ? renderObjectValue($key, (array)$item['value'], $sign, $depth)
+                            : renderKeyValueLines($key, $item['value'], $sign, $depth);
+                        return $acc;
+                    case NODE_TYPE_EQUAL:
+                        $sign = ' ';
+                        $acc[] = is_object($item['value'])
+                            ? renderObjectValue($key, (array)$item['value'], $sign, $depth)
+                            : renderKeyValueLines($key, $item['value'], $sign, $depth);
                         return $acc;
                     default:
                         throw new \Exception("Item's type not correct: '{$type}'");
@@ -57,27 +70,8 @@ function getDiffLines(array $data): array
     return $generateLines($data);
 }
 
-function getSign(string $action): string
+function renderLine(string $key, $val, string $sign, int $depth): string
 {
-    switch ($action) {
-        case NODE_TYPE_ADDED:
-            return '+';
-            break;
-        case NODE_TYPE_REMOVED:
-            return '-';
-            break;
-        case NODE_TYPE_EQUAL:
-        case NODE_TYPE_CHILDREN:
-            return ' ';
-            break;
-        default:
-            throw new \Exception("Action '{$action}' isn't correct");
-    }
-}
-
-function renderLine(string $key, $val, string $action, int $depth): string
-{
-    $sign = getSign($action);
     $offset = str_repeat('  ', $depth);
 
     if (is_bool($val)) {
@@ -89,24 +83,22 @@ function renderLine(string $key, $val, string $action, int $depth): string
     return "{$offset}{$sign} {$key}: {$val}";
 }
 
-function renderChildrenLines(string $key, array $children, string $action, int $depth)
+function renderChildrenLines(string $key, array $children, string $sign, int $depth)
 {
-    $sign = getSign($action);
     $offset = str_repeat('  ', $depth + 1);
-    $line = implode(PHP_EOL, $children);
+    $line = implode("\n", $children);
 
     return "{$offset}{$sign} {$key}: {\n{$line}\n  {$offset}}";
 }
 
-function renderObjectLines(string $key, array $obj, string $action, int $depth): string
+function renderObjectValue(string $key, array $obj, string $sign, int $depth): string
 {
-    $sign = getSign($action);
     $offset = str_repeat('  ', $depth + 1);
     $collect = collect($obj)
         ->map(function ($item, $k) use ($depth) {
-            return renderLine($k, $item, NODE_TYPE_EQUAL, $depth + 3);
+            return renderLine($k, $item, ' ', $depth + 3);
         })->toArray();
-    $line = implode(PHP_EOL, $collect);
+    $line = implode("\n", $collect);
 
     return "{$offset}{$sign} {$key}: {\n{$line}\n  {$offset}}";
 }
@@ -122,5 +114,5 @@ function render(array $astDiff): string
 {
     $lines = getDiffLines($astDiff);
 
-    return "{" . PHP_EOL . implode(PHP_EOL, $lines) . PHP_EOL . "}" . PHP_EOL;
+    return "{" . "\n" . implode("\n", $lines) . "\n" . "}" . "\n";
 }
