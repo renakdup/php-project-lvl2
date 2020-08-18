@@ -10,6 +10,13 @@ use const CalcDiff\GenerateAst\NODE_TYPE_EQUAL;
 use const CalcDiff\GenerateAst\NODE_TYPE_CHANGED;
 use const CalcDiff\GenerateAst\NODE_TYPE_CHILDREN;
 
+function render(array $astDiff): string
+{
+    $lines = getDiffLines($astDiff);
+
+    return implode("\n", $lines) . "\n";
+}
+
 function getDiffLines(array $data): array
 {
     $generateLines = function ($data, ?string $complexKey = null) use (&$generateLines): array {
@@ -20,18 +27,15 @@ function getDiffLines(array $data): array
                 switch ($item['type']) {
                     case NODE_TYPE_CHILDREN:
                         return $generateLines($item['children'], $key);
-                        break;
                     case NODE_TYPE_CHANGED:
-                        $valOld = prepareVal($item['valueOld']);
-                        $valNew = prepareVal($item['valueNew']);
+                        $valOld = getVal($item['valueOld']);
+                        $valNew = getVal($item['valueNew']);
                         return "Property '{$key}' was changed. From '{$valOld}' to '{$valNew}'";
                     case NODE_TYPE_ADDED:
-                        $val = prepareVal($item['value']);
+                        $val = getVal($item['valueNew']);
                         return "Property '{$key}' was added with value: '{$val}'";
-                        break;
                     case NODE_TYPE_REMOVED:
                         return "Property '{$key}' was removed";
-                        break;
                     case NODE_TYPE_EQUAL:
                         return null;
                     default:
@@ -49,7 +53,7 @@ function getDiffLines(array $data): array
         ->all();
 }
 
-function prepareVal($val)
+function getVal($val)
 {
     if (is_bool($val)) {
         $val = $val ? 'true' : 'false';
@@ -60,11 +64,4 @@ function prepareVal($val)
     }
 
     return $val;
-}
-
-function render(array $astDiff): string
-{
-    $lines = getDiffLines($astDiff);
-
-    return implode("\n", $lines) . "\n";
 }
